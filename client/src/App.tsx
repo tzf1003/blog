@@ -192,12 +192,16 @@ function App() {
 
 function RouteMe({ path, children, headerComponent, paddingClassName, requirePermission }:
   { path?: PathPattern, children: React.ReactNode | ((params: DefaultParams) => React.ReactNode), headerComponent?: React.ReactNode, paddingClassName?: string, requirePermission?: boolean }) {
-  if (requirePermission) {
-    const profile = useContext(ProfileContext);
-    const { t } = useTranslation();
-    if (!profile?.permission)
-      children = <ErrorPage error={t('error.permission_denied')} />;
+  // Hooks 必须在组件顶层调用，不能在条件语句内
+  const profile = useContext(ProfileContext);
+  const { t } = useTranslation();
+  
+  // 权限检查逻辑
+  let content = children;
+  if (requirePermission && !profile?.permission) {
+    content = <ErrorPage error={t('error.permission_denied')} />;
   }
+  
   return (
     <Route path={path} >
       {params => {
@@ -206,7 +210,7 @@ function RouteMe({ path, children, headerComponent, paddingClassName, requirePer
             {headerComponent}
           </Header>
           <Padding className={paddingClassName}>
-            {typeof children === 'function' ? children(params) : children}
+            {typeof content === 'function' ? content(params) : content}
           </Padding>
           <Footer />
         </>)

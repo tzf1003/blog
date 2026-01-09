@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
 /**
@@ -9,7 +9,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
  * - 动态粒子效果（多类型粒子）
  * - 粒子连线网络
  * - 流动光线
- * - 脉冲光晕
+ * - 浅色/暗色模式自适应
  * - 支持减少动画偏好
  */
 
@@ -23,7 +23,6 @@ interface Particle {
     life: number;
     maxLife: number;
     type: 'normal' | 'glow' | 'spark';
-    hue: number; // 色相偏移，用于颜色变化
 }
 
 interface FlowLine {
@@ -42,19 +41,47 @@ export function GlobalBackground() {
     const animationRef = useRef<number>(0);
     const timeRef = useRef<number>(0);
     const prefersReducedMotion = useReducedMotion();
+    const [isDark, setIsDark] = useState(false);
 
-    // 粒子配置 - 增强版
+    // 监听主题变化
+    useEffect(() => {
+        const checkTheme = () => {
+            const colorMode = document.documentElement.getAttribute('data-color-mode');
+            setIsDark(colorMode === 'dark');
+        };
+        
+        checkTheme();
+        
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-color-mode']
+        });
+        
+        return () => observer.disconnect();
+    }, []);
+
+    // 根据主题获取颜色配置
+    const colors = useMemo(() => ({
+        // 暗色模式：绿色系
+        // 浅色模式：使用更深的颜色以保证可见性
+        primary: isDark ? 'rgba(0, 255, 65,' : 'rgba(0, 180, 50,',
+        secondary: isDark ? 'rgba(0, 200, 100,' : 'rgba(0, 150, 80,',
+        particleOpacity: isDark ? 0.7 : 0.5,
+        connectionOpacity: isDark ? 0.25 : 0.15,
+        flowLineOpacity: isDark ? 0.3 : 0.2,
+    }), [isDark]);
+
+    // 粒子配置
     const config = useMemo(() => ({
-        particleCount: 80,
+        particleCount: 70,
         particleMinSize: 1,
-        particleMaxSize: 4,
-        particleSpeed: 0.4,
-        particleOpacity: 0.7,
-        connectionDistance: 180,
-        connectionOpacity: 0.2,
-        flowLineCount: 5,
-        flowLineSpeed: 2,
-        pulseSpeed: 0.02,
+        particleMaxSize: 3.5,
+        particleSpeed: 0.5,
+        connectionDistance: 160,
+        flowLineCount: 6,
+        flowLineSpeed: 1.5,
+        pulseSpeed: 0.015,
     }), []);
 
     useEffect(() => {
@@ -83,16 +110,15 @@ export function GlobalBackground() {
             return {
                 x: Math.random() * width,
                 y: Math.random() * height,
-                vx: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2 : 1),
-                vy: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2 : 1),
+                vx: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2.5 : 1),
+                vy: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2.5 : 1),
                 size: type === 'glow' 
-                    ? config.particleMaxSize + Math.random() * 2
+                    ? config.particleMaxSize + Math.random() * 1.5
                     : config.particleMinSize + Math.random() * (config.particleMaxSize - config.particleMinSize),
-                opacity: type === 'spark' ? 0.9 : Math.random() * config.particleOpacity + 0.3,
+                opacity: type === 'spark' ? 0.95 : Math.random() * 0.5 + 0.4,
                 life: Math.random() * 100,
-                maxLife: 300 + Math.random() * 400,
+                maxLife: 350 + Math.random() * 350,
                 type,
-                hue: Math.random() * 30 - 15, // -15 到 15 的色相偏移
             };
         };
 
@@ -108,15 +134,46 @@ export function GlobalBackground() {
         const initFlowLines = () => {
             flowLinesRef.current = [];
             for (let i = 0; i < config.flowLineCount; i++) {
-                flowLinesRef.current.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    length: 100 + Math.random() * 200,
-                    speed: config.flowLineSpeed + Math.random() * 2,
-                    opacity: 0.1 + Math.random() * 0.2,
-                    angle: Math.random() * Math.PI * 2,
-                });
+                flowLinesRef.current.push(createFlowLine());
             }
+        };
+
+        const createFlowLine = (): FlowLine => {
+            const side = Math.floor(Math.random() * 4);
+            let x, y, angle;
+            const length = 80 + Math.random() * 150;
+            
+            switch (side) {
+                case 0: // 上
+                    x = Math.random() * canvas.width;
+                    y = -length;
+                    angle = Math.PI / 4 + Math.random() * Math.PI / 2;
+                    break;
+                case 1: // 右
+                    x = canvas.width + length;
+                    y = Math.random() * canvas.height;
+                    angle = Math.PI * 0.75 + Math.random() * Math.PI / 2;
+                    break;
+                case 2: // 下
+                    x = Math.random() * canvas.width;
+                    y = canvas.height + length;
+                    angle = -Math.PI * 0.75 + Math.random() * Math.PI / 2;
+                    break;
+                default: // 左
+                    x = -length;
+                    y = Math.random() * canvas.height;
+                    angle = -Math.PI / 4 + Math.random() * Math.PI / 2;
+                    break;
+            }
+            
+            return {
+                x,
+                y,
+                length,
+                speed: config.flowLineSpeed + Math.random() * 1.5,
+                opacity: 0.15 + Math.random() * 0.2,
+                angle,
+            };
         };
 
         // 更新粒子
@@ -127,10 +184,10 @@ export function GlobalBackground() {
                 p.life++;
 
                 // 边界检测 - 平滑穿越
-                if (p.x < -10) p.x = canvas.width + 10;
-                if (p.x > canvas.width + 10) p.x = -10;
-                if (p.y < -10) p.y = canvas.height + 10;
-                if (p.y > canvas.height + 10) p.y = -10;
+                if (p.x < -20) p.x = canvas.width + 20;
+                if (p.x > canvas.width + 20) p.x = -20;
+                if (p.y < -20) p.y = canvas.height + 20;
+                if (p.y > canvas.height + 20) p.y = -20;
 
                 // 生命周期结束，重新生成
                 if (p.life > p.maxLife) {
@@ -141,56 +198,43 @@ export function GlobalBackground() {
 
         // 更新流动光线
         const updateFlowLines = () => {
-            flowLinesRef.current.forEach(line => {
+            flowLinesRef.current.forEach((line, index) => {
                 line.x += Math.cos(line.angle) * line.speed;
                 line.y += Math.sin(line.angle) * line.speed;
 
-                // 边界检测
-                if (line.x < -line.length || line.x > canvas.width + line.length ||
-                    line.y < -line.length || line.y > canvas.height + line.length) {
-                    // 从边缘重新进入
-                    const side = Math.floor(Math.random() * 4);
-                    switch (side) {
-                        case 0: // 上
-                            line.x = Math.random() * canvas.width;
-                            line.y = -line.length;
-                            line.angle = Math.PI / 4 + Math.random() * Math.PI / 2;
-                            break;
-                        case 1: // 右
-                            line.x = canvas.width + line.length;
-                            line.y = Math.random() * canvas.height;
-                            line.angle = Math.PI * 0.75 + Math.random() * Math.PI / 2;
-                            break;
-                        case 2: // 下
-                            line.x = Math.random() * canvas.width;
-                            line.y = canvas.height + line.length;
-                            line.angle = -Math.PI / 4 - Math.random() * Math.PI / 2;
-                            break;
-                        case 3: // 左
-                            line.x = -line.length;
-                            line.y = Math.random() * canvas.height;
-                            line.angle = -Math.PI / 4 + Math.random() * Math.PI / 2;
-                            break;
-                    }
+                // 检测是否离开屏幕
+                const margin = line.length * 2;
+                if (line.x < -margin || line.x > canvas.width + margin ||
+                    line.y < -margin || line.y > canvas.height + margin) {
+                    flowLinesRef.current[index] = createFlowLine();
                 }
             });
         };
 
-        // 绘制流动光线
-        const drawFlowLines = () => {
+        // 绘制
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            timeRef.current += config.pulseSpeed;
+
+            const particles = particlesRef.current;
+            const pulse = Math.sin(timeRef.current) * 0.2 + 0.8;
+
+            // 绘制流动光线
             flowLinesRef.current.forEach(line => {
                 const gradient = ctx.createLinearGradient(
                     line.x, line.y,
                     line.x - Math.cos(line.angle) * line.length,
                     line.y - Math.sin(line.angle) * line.length
                 );
-                gradient.addColorStop(0, `rgba(0, 255, 65, ${line.opacity})`);
-                gradient.addColorStop(0.5, `rgba(0, 255, 65, ${line.opacity * 0.5})`);
-                gradient.addColorStop(1, 'rgba(0, 255, 65, 0)');
+                const lineOpacity = line.opacity * colors.flowLineOpacity * 3;
+                gradient.addColorStop(0, `${colors.primary} ${lineOpacity})`);
+                gradient.addColorStop(0.4, `${colors.primary} ${lineOpacity * 0.5})`);
+                gradient.addColorStop(1, `${colors.primary} 0)`);
 
                 ctx.beginPath();
                 ctx.strokeStyle = gradient;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.5;
+                ctx.lineCap = 'round';
                 ctx.moveTo(line.x, line.y);
                 ctx.lineTo(
                     line.x - Math.cos(line.angle) * line.length,
@@ -198,20 +242,9 @@ export function GlobalBackground() {
                 );
                 ctx.stroke();
             });
-        };
-
-        // 绘制粒子和连线
-        const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            timeRef.current += config.pulseSpeed;
-
-            const particles = particlesRef.current;
-            const pulse = Math.sin(timeRef.current) * 0.3 + 0.7; // 0.4 - 1.0 脉冲
-
-            // 绘制流动光线
-            drawFlowLines();
 
             // 绘制连线
+            const connOpacity = colors.connectionOpacity * pulse;
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
@@ -219,10 +252,10 @@ export function GlobalBackground() {
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
                     if (distance < config.connectionDistance) {
-                        const opacity = (1 - distance / config.connectionDistance) * config.connectionOpacity * pulse;
+                        const opacity = (1 - distance / config.connectionDistance) * connOpacity;
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(0, 255, 65, ${opacity})`;
-                        ctx.lineWidth = 0.5;
+                        ctx.strokeStyle = `${colors.primary} ${opacity})`;
+                        ctx.lineWidth = 0.6;
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         ctx.stroke();
@@ -239,39 +272,39 @@ export function GlobalBackground() {
                         ? (1 - lifeRatio) * 10 
                         : 1;
 
-                const finalOpacity = p.opacity * fadeOpacity * pulse;
-                const hue = 140 + p.hue; // 基础绿色 + 偏移
+                const finalOpacity = p.opacity * fadeOpacity * pulse * colors.particleOpacity;
 
                 if (p.type === 'glow') {
-                    // 发光粒子 - 更大的光晕
-                    const glowGradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
-                    glowGradient.addColorStop(0, `hsla(${hue}, 100%, 50%, ${finalOpacity})`);
-                    glowGradient.addColorStop(0.5, `hsla(${hue}, 100%, 50%, ${finalOpacity * 0.3})`);
-                    glowGradient.addColorStop(1, `hsla(${hue}, 100%, 50%, 0)`);
+                    // 发光粒子 - 带光晕
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `${colors.primary} ${finalOpacity * 0.2})`;
+                    ctx.fill();
                     
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
-                    ctx.fillStyle = glowGradient;
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `${colors.primary} ${finalOpacity})`;
                     ctx.fill();
                 } else if (p.type === 'spark') {
                     // 火花粒子 - 带尾迹
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size * 0.8, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsla(${hue}, 100%, 70%, ${finalOpacity})`;
+                    ctx.fillStyle = `${colors.primary} ${finalOpacity})`;
                     ctx.fill();
 
                     // 尾迹
-                    const tailLength = 15;
+                    const tailLength = 12;
                     const gradient = ctx.createLinearGradient(
                         p.x, p.y,
                         p.x - p.vx * tailLength, p.y - p.vy * tailLength
                     );
-                    gradient.addColorStop(0, `hsla(${hue}, 100%, 70%, ${finalOpacity * 0.5})`);
-                    gradient.addColorStop(1, `hsla(${hue}, 100%, 70%, 0)`);
+                    gradient.addColorStop(0, `${colors.primary} ${finalOpacity * 0.6})`);
+                    gradient.addColorStop(1, `${colors.primary} 0)`);
                     
                     ctx.beginPath();
                     ctx.strokeStyle = gradient;
-                    ctx.lineWidth = p.size * 0.5;
+                    ctx.lineWidth = p.size * 0.6;
+                    ctx.lineCap = 'round';
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(p.x - p.vx * tailLength, p.y - p.vy * tailLength);
                     ctx.stroke();
@@ -279,13 +312,7 @@ export function GlobalBackground() {
                     // 普通粒子
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${finalOpacity})`;
-                    ctx.fill();
-
-                    // 小光晕
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${finalOpacity * 0.2})`;
+                    ctx.fillStyle = `${colors.primary} ${finalOpacity})`;
                     ctx.fill();
                 }
             });
@@ -307,19 +334,12 @@ export function GlobalBackground() {
             window.removeEventListener('resize', resizeCanvas);
             cancelAnimationFrame(animationRef.current);
         };
-    }, [prefersReducedMotion, config]);
+    }, [prefersReducedMotion, config, colors]);
 
     return (
         <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
             {/* 网格背景 */}
-            <div className="absolute inset-0 cyber-grid-global opacity-30 dark:opacity-50" />
-            
-            {/* 脉冲光晕 - CSS动画 */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyber-green/5 rounded-full blur-3xl animate-pulse-slow" />
-                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-cyber-green/5 rounded-full blur-3xl animate-pulse-slow animation-delay-1000" />
-                <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-cyber-green/3 rounded-full blur-2xl animate-pulse-slow animation-delay-2000" />
-            </div>
+            <div className="absolute inset-0 cyber-grid-global" />
             
             {/* 粒子Canvas */}
             {!prefersReducedMotion && (
