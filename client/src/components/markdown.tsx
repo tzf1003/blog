@@ -1,5 +1,5 @@
 import "katex/dist/katex.min.css";
-import React, { cloneElement, isValidElement, useEffect, useMemo, useRef } from "react";
+import React, { cloneElement, isValidElement, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
@@ -16,6 +16,88 @@ import Counter from "yet-another-react-lightbox/plugins/counter";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
+
+const codeBlockStyle = {
+  fontFamily: '"Fira Code", "JetBrains Mono", monospace',
+  fontSize: "14px",
+  fontVariantLigatures: "normal",
+  WebkitFontFeatureSettings: '"liga" 1',
+  fontFeatureSettings: '"liga" 1',
+};
+
+const inlineCodeStyle = {
+  ...codeBlockStyle,
+  fontSize: "13px",
+};
+
+/** 代码块组件 - 提取为独立组件以正确使用 hooks */
+function CodeBlock({ children, language }: { children: string; language: string }) {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <div className="relative group my-6">
+      {/* Terminal风格头部 */}
+      <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 dark:bg-slate-900 rounded-t-xl border-b border-slate-700">
+        <div className="flex gap-1.5">
+          <span className="w-3 h-3 rounded-full bg-red-500/80"></span>
+          <span className="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+          <span className="w-3 h-3 rounded-full bg-green-500/80"></span>
+        </div>
+        {language && (
+          <span className="ml-auto text-xs text-slate-400 font-mono uppercase tracking-wider">
+            {language}
+          </span>
+        )}
+      </div>
+      {/* 代码内容区域 */}
+      <div className="relative">
+        <SyntaxHighlighter
+          PreTag="div"
+          className="!rounded-t-none !rounded-b-xl !py-5 !px-5 !mt-0 !bg-slate-900 dark:!bg-[#1a1a2e]"
+          language={language}
+          style={vscDarkPlus}
+          wrapLongLines={true}
+          codeTagProps={{ style: codeBlockStyle }}
+          showLineNumbers={children.split('\n').length > 3}
+          lineNumberStyle={{
+            color: '#4a5568',
+            paddingRight: '1em',
+            borderRight: '1px solid #2d3748',
+            marginRight: '1em',
+            minWidth: '2.5em',
+          }}
+        >
+          {children.replace(/\n$/, "")}
+        </SyntaxHighlighter>
+        {/* 复制按钮 */}
+        <button
+          className={`absolute top-2 right-2 px-3 py-1.5 rounded-lg text-xs font-medium
+            transition-all duration-200 cursor-pointer
+            ${copied
+              ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30'
+              : 'bg-slate-700/80 text-slate-300 border border-slate-600 hover:bg-slate-600 hover:text-white'
+            }
+            invisible group-hover:visible`}
+          onClick={() => {
+            navigator.clipboard.writeText(children);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+        >
+          {copied ? (
+            <span className="flex items-center gap-1">
+              <i className="ri-check-line"></i> Copied!
+            </span>
+          ) : (
+            <span className="flex items-center gap-1">
+              <i className="ri-file-copy-line"></i> Copy
+            </span>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 
 const countNewlinesBeforeNode = (text: string, offset: number) => {
@@ -104,94 +186,16 @@ export function Markdown({ content }: { content: string }) {
           }
         },
         code(props) {
-          const [copied, setCopied] = React.useState(false);
           const { children, className, node, ...rest } = props;
           const match = /language-(\w+)/.exec(className || "");
 
           const curContent = content.slice(node?.position?.start.offset || 0);
           const isCodeBlock = curContent.trimStart().startsWith("```");
 
-          const codeBlockStyle = {
-            fontFamily: '"Fira Code", "JetBrains Mono", monospace',
-            fontSize: "14px",
-            fontVariantLigatures: "normal",
-            WebkitFontFeatureSettings: '"liga" 1',
-            fontFeatureSettings: '"liga" 1',
-          };
-
-          const inlineCodeStyle = {
-            ...codeBlockStyle,
-            fontSize: "13px",
-          };
-
           const language = match ? match[1] : "";
 
           if (isCodeBlock) {
-            return (
-              <div className="relative group my-6">
-                {/* Terminal风格头部 (Requirement 4.3) */}
-                <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 dark:bg-slate-900 rounded-t-xl border-b border-slate-700">
-                  {/* 窗口控制按钮 */}
-                  <div className="flex gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-red-500/80"></span>
-                    <span className="w-3 h-3 rounded-full bg-yellow-500/80"></span>
-                    <span className="w-3 h-3 rounded-full bg-green-500/80"></span>
-                  </div>
-                  {/* 语言标签 */}
-                  {language && (
-                    <span className="ml-auto text-xs text-slate-400 font-mono uppercase tracking-wider">
-                      {language}
-                    </span>
-                  )}
-                </div>
-                {/* 代码内容区域 */}
-                <div className="relative">
-                  <SyntaxHighlighter
-                    PreTag="div"
-                    className="!rounded-t-none !rounded-b-xl !py-5 !px-5 !mt-0 !bg-slate-900 dark:!bg-[#1a1a2e]"
-                    language={language}
-                    style={vscDarkPlus}
-                    wrapLongLines={true}
-                    codeTagProps={{ style: codeBlockStyle }}
-                    showLineNumbers={String(children).split('\n').length > 3}
-                    lineNumberStyle={{
-                      color: '#4a5568',
-                      paddingRight: '1em',
-                      borderRight: '1px solid #2d3748',
-                      marginRight: '1em',
-                      minWidth: '2.5em',
-                    }}
-                  >
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
-                  {/* 复制按钮 */}
-                  <button
-                    className={`absolute top-2 right-2 px-3 py-1.5 rounded-lg text-xs font-medium
-                      transition-all duration-200 cursor-pointer
-                      ${copied
-                        ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30'
-                        : 'bg-slate-700/80 text-slate-300 border border-slate-600 hover:bg-slate-600 hover:text-white'
-                      }
-                      invisible group-hover:visible`}
-                    onClick={() => {
-                      navigator.clipboard.writeText(String(children));
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                  >
-                    {copied ? (
-                      <span className="flex items-center gap-1">
-                        <i className="ri-check-line"></i> Copied!
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1">
-                        <i className="ri-file-copy-line"></i> Copy
-                      </span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            );
+            return <CodeBlock language={language}>{String(children)}</CodeBlock>;
           } else {
             return (
               <code
