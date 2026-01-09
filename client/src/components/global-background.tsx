@@ -41,7 +41,13 @@ export function GlobalBackground() {
     const animationRef = useRef<number>(0);
     const timeRef = useRef<number>(0);
     const prefersReducedMotion = useReducedMotion();
-    const [isDark, setIsDark] = useState(false);
+    // 初始值从 DOM 读取，避免首次渲染闪烁
+    const [isDark, setIsDark] = useState(() => {
+        if (typeof document !== 'undefined') {
+            return document.documentElement.getAttribute('data-color-mode') === 'dark';
+        }
+        return false;
+    });
 
     // 监听主题变化
     useEffect(() => {
