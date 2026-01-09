@@ -8,7 +8,17 @@
       rel="stylesheet"
     />
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
-
+    <!-- 防止主题闪烁：在 CSS 加载前设置 data-color-mode -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        var resolved = theme;
+        if (!theme || theme === 'system') {
+          resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-color-mode', resolved);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
