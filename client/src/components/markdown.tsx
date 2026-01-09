@@ -394,7 +394,7 @@ export function Markdown({ content }: { content: string }) {
           return <div {...props}>{children}</div>;
         },
       }}
-    />), [content])
+    />), [content, isDark])
 
 
 

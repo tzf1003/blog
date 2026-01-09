@@ -318,7 +318,8 @@ article .toc-content {
 
 /* 代码块样式重置 - 覆盖 prose 的 pre 样式 */
 .not-prose pre,
-.not-prose code {
+.not-prose code,
+.toc-content pre {
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;
