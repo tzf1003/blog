@@ -19,23 +19,31 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import { useColorMode } from "../utils/darkModeUtils";
 
-// 自定义主题：保留语法高亮颜色，移除背景
-const createCustomTheme = (baseTheme: typeof vscDarkPlus) => ({
-  ...baseTheme,
-  'pre[class*="language-"]': {
-    ...baseTheme['pre[class*="language-"]'],
-    background: 'transparent',
-    margin: 0,
-    padding: 0,
-  },
-  'code[class*="language-"]': {
-    ...baseTheme['code[class*="language-"]'],
-    background: 'transparent',
-  },
-});
+// 自定义主题：保留语法高亮颜色，完全移除背景
+const createCustomTheme = (baseTheme: Record<string, React.CSSProperties>) => {
+  const customTheme: Record<string, React.CSSProperties> = {};
+  for (const key in baseTheme) {
+    customTheme[key] = { ...baseTheme[key] };
+    // 移除所有背景相关属性
+    if ('background' in customTheme[key]) {
+      customTheme[key].background = 'transparent';
+    }
+    if ('backgroundColor' in customTheme[key]) {
+      customTheme[key].backgroundColor = 'transparent';
+    }
+    // 移除 padding 和 margin（由外层容器控制）
+    if (key.includes('pre') || key.includes('code')) {
+      customTheme[key].margin = 0;
+      customTheme[key].padding = 0;
+      customTheme[key].background = 'transparent';
+      customTheme[key].backgroundColor = 'transparent';
+    }
+  }
+  return customTheme;
+};
 
-const customDarkTheme = createCustomTheme(vscDarkPlus);
-const customLightTheme = createCustomTheme(oneLight);
+const customDarkTheme = createCustomTheme(vscDarkPlus as Record<string, React.CSSProperties>);
+const customLightTheme = createCustomTheme(oneLight as Record<string, React.CSSProperties>);
 
 
 const countNewlinesBeforeNode = (text: string, offset: number) => {
