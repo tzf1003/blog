@@ -339,6 +339,9 @@ export function GlobalBackground() {
 
     return (
         <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+            {/* 基础背景色 */}
+            <div className="absolute inset-0 bg-slate-50 dark:bg-cyber-dark transition-colors duration-300" />
+            
             {/* 网格背景 */}
             <div className="absolute inset-0 cyber-grid-global" />
             
