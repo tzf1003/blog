@@ -3,16 +3,77 @@
 @tailwind utilities;
 
 @layer base {
-    /* Glass morphism effect */
-    .glass {
-      @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-glass border border-slate-200/50 dark:border-slate-700/50;
+    /* ============================================
+     * Glass Morphism System - 玻璃态组件系统
+     * Requirements: 2.1, 2.2, 2.3, 2.4, 9.4, 9.6
+     * ============================================ */
+    
+    /* Glass Light - 轻度玻璃效果 (blur: 8px, opacity: 0.1) */
+    .glass-light {
+      @apply backdrop-blur-glass-light bg-white/10 dark:bg-black/15;
+      @apply border border-white/10 dark:border-white/10;
+      @apply shadow-glass-light dark:shadow-glass-dark-light;
+      @apply transition-all duration-300;
     }
-
+    
+    /* Glass Medium - 中度玻璃效果 (blur: 12px, opacity: 0.2) */
+    .glass-medium {
+      @apply backdrop-blur-glass bg-white/20 dark:bg-black/25;
+      @apply border border-white/20 dark:border-white/10;
+      @apply shadow-glass-medium dark:shadow-glass-dark-medium;
+      @apply transition-all duration-300;
+    }
+    
+    /* Glass Strong - 强度玻璃效果 (blur: 20px, opacity: 0.3) */
     .glass-strong {
-      @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700;
+      @apply backdrop-blur-glass-strong bg-white/30 dark:bg-black/35;
+      @apply border border-white/30 dark:border-white/20;
+      @apply shadow-glass-strong dark:shadow-glass-dark-strong;
+      @apply transition-all duration-300;
+    }
+    
+    /* Glass Glow - 悬浮发光效果 (Cyber Green) */
+    .glass-glow {
+      @apply shadow-glow;
+      @apply border-cyber-green/30;
+      @apply transition-shadow duration-300;
+    }
+    
+    /* Glass Glow Hover - 悬浮时增强发光 */
+    .glass-glow-hover:hover {
+      @apply shadow-glow-md;
+      @apply border-cyber-green/50;
+    }
+    
+    /* Glass Border - 玻璃边框效果 */
+    .glass-border {
+      @apply border border-white/20 dark:border-white/10;
+      @apply transition-colors duration-300;
+    }
+    
+    /* Glass Border Glow - 发光边框效果 */
+    .glass-border-glow {
+      @apply border border-cyber-green/30;
+      @apply shadow-cyber-border;
+      @apply transition-all duration-300;
+    }
+    
+    .glass-border-glow:hover {
+      @apply border-cyber-green/50;
+      @apply shadow-cyber-border-hover;
     }
 
-    /* Background utilities */
+    /* Legacy Glass - 保持向后兼容 */
+    .glass {
+      @apply backdrop-blur-glass bg-white/20 dark:bg-black/25;
+      @apply border border-white/20 dark:border-white/10;
+      @apply shadow-glass-medium dark:shadow-glass-dark-medium;
+      @apply transition-all duration-300;
+    }
+
+    /* ============================================
+     * Background Utilities - 背景工具类
+     * ============================================ */
     .bg-w {
       @apply bg-white dark:bg-slate-900;
     }
@@ -28,8 +89,19 @@
     .bg-hover {
       @apply hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer;
     }
+    
+    /* Cyber背景 */
+    .bg-cyber-dark {
+      background-color: #0D0D0D;
+    }
+    
+    .bg-cyber-gradient {
+      background: linear-gradient(135deg, #0D0D0D 0%, #1F1F1F 50%, #0D0D0D 100%);
+    }
   
-    /* Shadow utilities */
+    /* ============================================
+     * Shadow Utilities - 阴影工具类
+     * ============================================ */
     .shadow-light {
       @apply shadow-slate-200/30 dark:shadow-black/20;
     }
@@ -38,24 +110,48 @@
       @apply shadow-slate-300/50 dark:shadow-black/40;
     }
 
-    .shadow-glow {
-      @apply shadow-lg shadow-theme/20;
+    /* Cyber Glow Shadows */
+    .shadow-cyber-glow {
+      @apply shadow-glow;
+    }
+    
+    .shadow-cyber-glow-md {
+      @apply shadow-glow-md;
+    }
+    
+    .shadow-cyber-glow-lg {
+      @apply shadow-glow-lg;
     }
   
-    /* Text utilities */
+    /* ============================================
+     * Text Utilities - 文字工具类
+     * Requirements: 9.6, 13.1 (WCAG AA 对比度)
+     * ============================================ */
     .t-primary {
-      @apply text-slate-900 dark:text-slate-100;
+      @apply text-slate-900 dark:text-slate-50;
     }
   
     .t-secondary {
-      @apply text-slate-600 dark:text-slate-400;
+      @apply text-slate-600 dark:text-slate-300;
     }
 
     .t-muted {
-      @apply text-slate-500 dark:text-slate-500;
+      @apply text-slate-500 dark:text-slate-400;
+    }
+    
+    /* Cyber Text */
+    .t-cyber {
+      @apply text-cyber-green;
+    }
+    
+    .t-cyber-glow {
+      @apply text-cyber-green;
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.3);
     }
   
-    /* Width utilities */
+    /* ============================================
+     * Width Utilities - 宽度工具类
+     * ============================================ */
     .wauto {
       @apply w-full md:w-11/12 lg:w-10/12 xl:w-9/12 2xl:w-8/12 transition-all duration-300;
     }
@@ -64,7 +160,9 @@
       @apply w-full md:w-10/12 lg:w-9/12 xl:w-8/12 transition-all duration-300;
     }
 
-    /* Interactive elements */
+    /* ============================================
+     * Interactive Elements - 交互元素
+     * ============================================ */
     .interactive {
       @apply cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
     }
@@ -74,6 +172,106 @@
     }
 
     .btn-secondary {
-      @apply glass hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 font-medium px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer;
+      @apply backdrop-blur-glass bg-white/20 dark:bg-black/20 border border-white/20 dark:border-white/10;
+      @apply hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 font-medium px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer;
+    }
+    
+    /* Cyber Button */
+    .btn-cyber {
+      @apply bg-cyber-green/10 hover:bg-cyber-green/20 active:bg-cyber-green/30;
+      @apply text-cyber-green font-medium px-4 py-2 rounded-lg;
+      @apply border border-cyber-green/30 hover:border-cyber-green/50;
+      @apply shadow-glow hover:shadow-glow-md;
+      @apply transition-all duration-300 cursor-pointer;
+    }
+
+    /* ============================================
+     * Accessibility Utilities - 无障碍工具类
+     * Requirements: 13.2, 13.5, 13.6
+     * ============================================ */
+    
+    /* Skip Link - 跳过链接 (视觉隐藏但可聚焦) */
+    .skip-link {
+      @apply absolute -top-full left-4 z-[9999];
+      @apply px-4 py-3 rounded-lg;
+      @apply bg-cyber-green text-cyber-dark font-medium;
+      @apply shadow-glow-md;
+      @apply transition-all duration-200;
+      @apply focus:top-4 focus:outline-none;
+    }
+    
+    /* Screen Reader Only - 仅屏幕阅读器可见 */
+    .sr-only {
+      @apply absolute w-px h-px p-0 -m-px overflow-hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+    
+    /* Focus Visible - 可见焦点指示器 */
+    .focus-visible-ring {
+      @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-green focus-visible:ring-offset-2;
+      @apply focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900;
+    }
+    
+    /* Interactive Focus - 交互元素焦点样式 */
+    .interactive-focus {
+      @apply focus:outline-none focus:ring-2 focus:ring-cyber-green/50;
+      @apply focus:border-cyber-green/50;
+      @apply transition-all duration-200;
     }
   }
+
+
+/* ============================================
+ * Toast Animations - Toast通知动画
+ * Requirements: 10.4
+ * ============================================ */
+@keyframes toast-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Reduced motion support for toast */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes toast-progress {
+    from { width: 100%; }
+    to { width: 0%; }
+  }
+  
+  @keyframes toast-slide-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes toast-slide-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+}

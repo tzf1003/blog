@@ -36,6 +36,7 @@ export function MomentItem({
                         src={moment.user.avatar} 
                         alt={moment.user.username} 
                         className="w-10 h-10 rounded-lg object-cover border-2 border-slate-200 dark:border-slate-700"
+                        loading="lazy"
                     />
                     <div>
                         <p className="t-primary font-medium">

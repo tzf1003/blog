@@ -76,9 +76,9 @@ export function HashtagPage({ name }: { name: string }) {
                         </div>
                     </div>
                     <Waiting for={status === 'idle'}>
-                        <div className="wauto flex flex-col">
-                            {hashtag?.feeds?.map(({ id, ...feed }: any) => (
-                                <FeedCard key={id} id={id} {...feed} />
+                        <div className="wauto flex flex-col gap-4">
+                            {hashtag?.feeds?.map(({ id, ...feed }: any, index: number) => (
+                                <FeedCard key={id} id={id} index={index} {...feed} />
                             ))}
                         </div>
                     </Waiting>

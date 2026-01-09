@@ -1,0 +1,566 @@
+/* ============================================
+ * Cyber Effects - 网络安全主题特效
+ * Requirements: 4.2, 4.4, 4.5, 4.6, 4.7
+ * ============================================ */
+
+/* ============================================
+ * Matrix Rain Effect - 矩阵雨效果
+ * Requirement: 4.2
+ * ============================================ */
+.matrix-rain {
+  position: relative;
+  overflow: hidden;
+}
+
+.matrix-rain::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(180deg, 
+      transparent 0%, 
+      rgba(0, 255, 65, 0.03) 50%, 
+      transparent 100%
+    );
+  background-size: 100% 200%;
+  animation: matrix-fall 8s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.matrix-rain-intense::before {
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 65, 0.03) 2px,
+      rgba(0, 255, 65, 0.03) 4px
+    ),
+    linear-gradient(180deg, 
+      transparent 0%, 
+      rgba(0, 255, 65, 0.05) 50%, 
+      transparent 100%
+    );
+  animation: matrix-fall 6s linear infinite;
+}
+
+@keyframes matrix-fall {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 200%;
+  }
+}
+
+/* Matrix字符雨容器 */
+.matrix-chars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.matrix-column {
+  position: absolute;
+  top: -100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #00FF41;
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+  animation: matrix-drop 10s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes matrix-drop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+ * Glitch Text Effect - 故障文字效果
+ * Requirement: 4.4
+ * ============================================ */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.glitch-text::before {
+  color: #ff0000;
+  animation: glitch-shift-1 0.5s ease-in-out infinite alternate;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  transform: translate(-2px, -2px);
+}
+
+.glitch-text::after {
+  color: #00ffff;
+  animation: glitch-shift-2 0.5s ease-in-out infinite alternate;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  transform: translate(2px, 2px);
+}
+
+@keyframes glitch-shift-1 {
+  0% {
+    transform: translate(-2px, -2px);
+  }
+  100% {
+    transform: translate(2px, 2px);
+  }
+}
+
+@keyframes glitch-shift-2 {
+  0% {
+    transform: translate(2px, 2px);
+  }
+  100% {
+    transform: translate(-2px, -2px);
+  }
+}
+
+/* Glitch效果 - 悬浮触发 */
+.glitch-hover:hover {
+  animation: glitch-shake 0.3s ease-in-out;
+}
+
+.glitch-hover:hover::before,
+.glitch-hover:hover::after {
+  animation-duration: 0.2s;
+}
+
+@keyframes glitch-shake {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* 轻量级Glitch - 仅文字阴影 */
+.glitch-subtle {
+  text-shadow: 
+    -1px 0 #ff0000,
+    1px 0 #00ffff;
+  animation: glitch-subtle 3s ease-in-out infinite;
+}
+
+@keyframes glitch-subtle {
+  0%, 90%, 100% {
+    text-shadow: 
+      -1px 0 #ff0000,
+      1px 0 #00ffff;
+  }
+  92% {
+    text-shadow: 
+      2px 0 #ff0000,
+      -2px 0 #00ffff;
+  }
+  94% {
+    text-shadow: 
+      -2px 0 #ff0000,
+      2px 0 #00ffff;
+  }
+}
+
+/* ============================================
+ * Scan Line Effect - 扫描线效果
+ * Requirement: 4.5
+ * ============================================ */
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 255, 65, 0.3) 50%,
+    transparent 100%
+  );
+  animation: scan-move 4s linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes scan-move {
+  0% {
+    top: -4px;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* 扫描线覆盖 - 用于图片 */
+.scan-overlay {
+  position: relative;
+}
+
+.scan-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* CRT扫描线效果 */
+.crt-lines {
+  position: relative;
+}
+
+.crt-lines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ============================================
+ * Cyber Grid Background - 网格背景图案
+ * Requirement: 4.6
+ * ============================================ */
+.cyber-grid {
+  position: relative;
+  background-color: #0D0D0D;
+}
+
+.cyber-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 透视网格 */
+.cyber-grid-perspective {
+  position: relative;
+  background-color: #0D0D0D;
+  overflow: hidden;
+}
+
+.cyber-grid-perspective::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 200%;
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.15) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: center top;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 动态网格 */
+.cyber-grid-animated::before {
+  animation: grid-pulse 4s ease-in-out infinite;
+}
+
+@keyframes grid-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 小型网格 */
+.cyber-grid-sm::before {
+  background-size: 20px 20px;
+}
+
+/* 大型网格 */
+.cyber-grid-lg::before {
+  background-size: 80px 80px;
+}
+
+/* ============================================
+ * Neon Glow Effect - 霓虹发光效果
+ * Requirement: 4.7
+ * ============================================ */
+.neon-glow {
+  box-shadow: 
+    0 0 5px rgba(0, 255, 65, 0.3),
+    0 0 10px rgba(0, 255, 65, 0.2),
+    0 0 20px rgba(0, 255, 65, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.neon-glow:hover {
+  box-shadow: 
+    0 0 10px rgba(0, 255, 65, 0.5),
+    0 0 20px rgba(0, 255, 65, 0.3),
+    0 0 40px rgba(0, 255, 65, 0.2);
+}
+
+/* 霓虹文字 */
+.neon-text {
+  color: #00FF41;
+  text-shadow: 
+    0 0 5px rgba(0, 255, 65, 0.5),
+    0 0 10px rgba(0, 255, 65, 0.3),
+    0 0 20px rgba(0, 255, 65, 0.2);
+}
+
+.neon-text-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 5px rgba(0, 255, 65, 0.5),
+      0 0 10px rgba(0, 255, 65, 0.3),
+      0 0 20px rgba(0, 255, 65, 0.2);
+  }
+  50% {
+    text-shadow: 
+      0 0 10px rgba(0, 255, 65, 0.8),
+      0 0 20px rgba(0, 255, 65, 0.5),
+      0 0 40px rgba(0, 255, 65, 0.3);
+  }
+}
+
+/* 霓虹边框 */
+.neon-border {
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  box-shadow: 
+    inset 0 0 10px rgba(0, 255, 65, 0.1),
+    0 0 10px rgba(0, 255, 65, 0.2);
+  transition: all 0.3s ease;
+}
+
+.neon-border:hover {
+  border-color: rgba(0, 255, 65, 0.6);
+  box-shadow: 
+    inset 0 0 15px rgba(0, 255, 65, 0.2),
+    0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+/* 霓虹按钮 */
+.neon-button {
+  position: relative;
+  background: transparent;
+  border: 2px solid #00FF41;
+  color: #00FF41;
+  padding: 12px 24px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 65, 0.3),
+    inset 0 0 10px rgba(0, 255, 65, 0.1);
+}
+
+.neon-button:hover {
+  background: rgba(0, 255, 65, 0.1);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 65, 0.5),
+    0 0 40px rgba(0, 255, 65, 0.3),
+    inset 0 0 20px rgba(0, 255, 65, 0.2);
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+.neon-button:active {
+  transform: scale(0.98);
+}
+
+/* 霓虹按钮流光效果 */
+.neon-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 65, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.neon-button:hover::before {
+  left: 100%;
+}
+
+/* ============================================
+ * Terminal Style - 终端风格
+ * ============================================ */
+.terminal-text {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: #00FF41;
+  background: #0D0D0D;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.2em;
+  background: #00FF41;
+  animation: cursor-blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 终端提示符 */
+.terminal-prompt::before {
+  content: '> ';
+  color: #00FF41;
+  font-weight: bold;
+}
+
+/* ============================================
+ * Reduced Motion Support - 减少动画支持
+ * ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .matrix-rain::before,
+  .matrix-rain-intense::before,
+  .matrix-column,
+  .glitch-text::before,
+  .glitch-text::after,
+  .glitch-subtle,
+  .scan-line::after,
+  .cyber-grid-animated::before,
+  .neon-text-pulse,
+  .terminal-cursor {
+    animation: none !important;
+  }
+  
+  .glitch-text::before,
+  .glitch-text::after {
+    display: none;
+  }
+  
+  .neon-button::before {
+    display: none;
+  }
+}
+
+
+/* ============================================
+ * Cyber Grid Subtle - 轻量级网格背景
+ * 用于Footer等区域的微妙背景效果
+ * ============================================ */
+.cyber-grid-subtle {
+  position: relative;
+}
+
+.cyber-grid-subtle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 暗色模式下增强可见度 */
+[data-color-mode="dark"] .cyber-grid-subtle::before {
+  background-image: 
+    linear-gradient(rgba(0, 255, 65, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.08) 1px, transparent 1px);
+}

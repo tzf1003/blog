@@ -86,6 +86,8 @@ export function Markdown({ content }: { content: string }) {
               }}
               className={`mx-auto ${rounded ? "rounded-xl" : ""}`}
               style={{ zoom: scale }}
+              loading="lazy"
+              decoding="async"
             />
           );
           if (

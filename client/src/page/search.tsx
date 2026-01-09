@@ -69,9 +69,9 @@ export function SearchPage({ keyword }: { keyword: string }) {
                         </div>
                     </div>
                     <Waiting for={status === 'idle'}>
-                        <div className="wauto flex flex-col">
-                            {feeds?.data.map(({ id, ...feed }: any) => (
-                                <FeedCard key={id} id={id} {...feed} />
+                        <div className="wauto flex flex-col gap-4">
+                            {feeds?.data.map(({ id, ...feed }: any, index: number) => (
+                                <FeedCard key={id} id={id} index={index} {...feed} />
                             ))}
                         </div>
                         <div className="wauto flex flex-row items-center mt-4 ani-show">

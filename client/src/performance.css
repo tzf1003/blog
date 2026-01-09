@@ -1,0 +1,266 @@
+/* ============================================
+ * Performance Optimization CSS
+ * 动画性能优化样式
+ * Requirements: 11.4, 12.2, 12.3
+ * ============================================ */
+
+/* ============================================
+ * GPU Acceleration Utilities
+ * GPU加速工具类
+ * ============================================ */
+
+/* 强制GPU加速 - 用于需要高性能动画的元素 */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Will-change提示 - 仅在动画开始前添加 */
+.will-animate {
+  will-change: transform, opacity;
+}
+
+/* 动画完成后移除will-change */
+.animation-complete {
+  will-change: auto;
+}
+
+/* ============================================
+ * Performance-Safe Animations
+ * 性能安全的动画（仅使用transform/opacity）
+ * ============================================ */
+
+/* 安全的淡入动画 */
+.perf-fade-in {
+  animation: perfFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes perfFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 安全的缩放动画 */
+.perf-scale-in {
+  animation: perfScaleIn 0.3s ease-out forwards;
+}
+
+@keyframes perfScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 安全的滑入动画 */
+.perf-slide-up {
+  animation: perfSlideUp 0.4s ease-out forwards;
+}
+
+@keyframes perfSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 安全的悬浮效果 */
+.perf-hover-lift {
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.perf-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* 安全的按压效果 */
+.perf-press {
+  transition: transform 0.1s ease-out;
+}
+
+.perf-press:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+ * Reduced Motion Fallbacks
+ * 减少动画的降级方案
+ * ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* 禁用所有动画 */
+  .perf-fade-in,
+  .perf-scale-in,
+  .perf-slide-up {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* 禁用过渡效果 */
+  .perf-hover-lift,
+  .perf-press {
+    transition: none !important;
+  }
+
+  .perf-hover-lift:hover,
+  .perf-press:active {
+    transform: none !important;
+  }
+
+  /* 移除will-change */
+  .will-animate {
+    will-change: auto !important;
+  }
+
+  /* 移除GPU加速（节省内存） */
+  .gpu-accelerated {
+    transform: none;
+    backface-visibility: visible;
+    perspective: none;
+  }
+}
+
+/* ============================================
+ * Low Performance Mode
+ * 低性能模式样式
+ * ============================================ */
+
+/* 当检测到低性能时，通过JS添加此类到body */
+/* 禁用所有动画 */
+body.low-performance-mode * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* 移除所有will-change */
+body.low-performance-mode .will-animate {
+  will-change: auto !important;
+}
+
+/* 简化阴影效果 */
+body.low-performance-mode .shadow-glow,
+body.low-performance-mode .shadow-glow-md,
+body.low-performance-mode .shadow-glow-lg {
+  box-shadow: none !important;
+}
+
+/* 简化backdrop-filter */
+body.low-performance-mode .glass,
+body.low-performance-mode .glass-light,
+body.low-performance-mode .glass-medium,
+body.low-performance-mode .glass-strong {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ============================================
+ * Medium Performance Mode
+ * 中等性能模式样式
+ * ============================================ */
+
+/* 减少动画时长 */
+body.medium-performance-mode * {
+  animation-duration: 0.21s !important;
+  transition-duration: 0.21s !important;
+}
+
+/* 简化glow效果 */
+body.medium-performance-mode .shadow-glow-lg {
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3) !important;
+}
+
+/* 降低backdrop-filter强度 */
+body.medium-performance-mode .glass-strong {
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* ============================================
+ * Animation Performance Classes
+ * 动画性能辅助类
+ * ============================================ */
+
+/* 仅在悬浮时启用will-change */
+.will-change-on-hover {
+  will-change: auto;
+}
+
+.will-change-on-hover:hover {
+  will-change: transform, opacity;
+}
+
+/* 动画容器 - 包含动画元素时使用 */
+.animation-container {
+  contain: layout style paint;
+  isolation: isolate;
+}
+
+/* 强制合成层 */
+.composited-layer {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ============================================
+ * Intersection Observer Animations
+ * 基于可见性的动画（配合JS使用）
+ * ============================================ */
+
+/* 初始隐藏状态 */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* 可见时的状态 */
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 交错动画延迟 */
+.stagger-1 { transition-delay: 50ms; }
+.stagger-2 { transition-delay: 100ms; }
+.stagger-3 { transition-delay: 150ms; }
+.stagger-4 { transition-delay: 200ms; }
+.stagger-5 { transition-delay: 250ms; }
+.stagger-6 { transition-delay: 300ms; }
+.stagger-7 { transition-delay: 350ms; }
+.stagger-8 { transition-delay: 400ms; }
+.stagger-9 { transition-delay: 450ms; }
+.stagger-10 { transition-delay: 500ms; }
+
+/* ============================================
+ * Safe Animation Properties Reference
+ * 安全动画属性参考（仅使用这些属性）
+ * 
+ * ✅ 安全属性（GPU加速）:
+ *    - transform (translate, scale, rotate, skew)
+ *    - opacity
+ *    - filter (部分浏览器)
+ * 
+ * ❌ 避免使用（触发重排/重绘）:
+ *    - width, height
+ *    - top, left, right, bottom
+ *    - margin, padding
+ *    - border-width
+ *    - font-size
+ * ============================================ */

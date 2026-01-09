@@ -299,6 +299,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       src={feed.user.avatar || "/avatar.png"}
                       className="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700"
                       alt={feed.user.username}
+                      loading="lazy"
                     />
                     <div>
                       <span className="t-primary font-medium block">
@@ -566,6 +567,7 @@ function CommentItem({
         src={comment.user.avatar || ""}
         className="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700 flex-shrink-0"
         alt={comment.user.username}
+        loading="lazy"
       />
       <div className="flex flex-col flex-1 min-w-0">
         <div className="flex items-center justify-between mb-2">

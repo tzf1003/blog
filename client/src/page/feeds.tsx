@@ -3,12 +3,14 @@ import { Helmet } from 'react-helmet'
 import { Link, useSearch } from "wouter"
 import { FeedCard } from "../components/feed_card"
 import { Waiting } from "../components/loading"
+import { FeedCardSkeleton } from "../components/ui/loading-skeleton"
 import { client } from "../main"
 import { ProfileContext } from "../state/profile"
 import { headersWithAuth } from "../utils/auth"
 import { siteName } from "../utils/constants"
 import { tryInt } from "../utils/int"
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next"
+import { useReducedMotion } from "../hooks/useReducedMotion"
 
 type FeedsData = {
     size: number,
@@ -26,6 +28,7 @@ export function FeedsPage() {
     const { t } = useTranslation()
     const query = new URLSearchParams(useSearch());
     const profile = useContext(ProfileContext);
+    const prefersReducedMotion = useReducedMotion()
     const [listState, _setListState] = useState<FeedType>(query.get("type") as FeedType || 'normal')
     const [status, setStatus] = useState<'loading' | 'idle'>('idle')
     const [feeds, setFeeds] = useState<FeedsMap>({
@@ -109,8 +112,8 @@ export function FeedsPage() {
                     </div>
                     <Waiting for={status === 'idle'}>
                         <div className="wauto flex flex-col gap-4">
-                            {feeds[listState].data.map(({ id, ...feed }: any) => (
-                                <FeedCard key={id} id={id} {...feed} />
+                            {feeds[listState].data.map(({ id, ...feed }: any, index: number) => (
+                                <FeedCard key={id} id={id} index={index} {...feed} />
                             ))}
                         </div>
                         <div className="wauto flex items-center justify-between mt-8 gap-4">
