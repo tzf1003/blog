@@ -253,18 +253,16 @@ html {
 
 /* Body基础样式 */
 body {
-  @apply text-slate-900 dark:text-slate-100;
+  @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100;
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: var(--theme-transition);
-  /* 背景由 GlobalBackground 组件提供 */
-  background: transparent;
 }
 
 /* 暗色模式body增强 */
 [data-color-mode="dark"] body {
-  background: transparent;
+  @apply bg-cyber-dark;
 }
 
 /* ============================================
@@ -318,8 +316,7 @@ article .toc-content {
 
 /* 代码块样式重置 - 覆盖 prose 的 pre 样式 */
 .not-prose pre,
-.not-prose code,
-.toc-content pre {
+.not-prose code {
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;
