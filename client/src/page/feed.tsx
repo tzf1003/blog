@@ -200,10 +200,9 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
         )}
         {feed && !error && (
           <>
-            <div className="xl:w-64" />
-            <main className="wauto">
+            <main className="w-full max-w-4xl mx-auto px-4">
               <article
-                className="glass-strong rounded-2xl m-4 px-6 sm:px-10 md:px-14 py-10 md:py-14 shadow-light"
+                className="glass-strong rounded-2xl px-6 sm:px-10 md:px-14 py-10 md:py-14 shadow-light"
                 aria-label={feed.title ?? "Unnamed"}
               >
                 <header className="flex justify-between items-start mb-10">
@@ -316,11 +315,9 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
               {feed && <Comments id={`${feed.id}`} />}
               <div className="h-16" />
             </main>
-            <div className="w-80 hidden lg:block relative">
-              <div className="start-0 end-0 top-24 sticky">
-                <TOC />
-              </div>
-            </div>
+            <aside className="w-64 hidden xl:block fixed right-8 top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
+              <TOC />
+            </aside>
           </>
         )}
       </div>
@@ -334,7 +331,7 @@ export function TOCHeader({ TOC }: { TOC: () => JSX.Element }) {
   const [isOpened, setIsOpened] = useState(false);
 
   return (
-    <div className="lg:hidden">
+    <div className="xl:hidden">
       <button
         onClick={() => setIsOpened(true)}
         className="w-9 h-9 rounded-lg flex items-center justify-center t-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer"

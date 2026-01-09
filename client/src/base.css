@@ -41,10 +41,10 @@
       @apply transition-all duration-300;
     }
     
-    /* Glass Strong - 强度玻璃效果 (blur: 24px, opacity: 0.15) */
+    /* Glass Strong - 强度玻璃效果 (blur: 24px) */
     .glass-strong {
-      @apply backdrop-blur-[24px] bg-white/15 dark:bg-black/20;
-      @apply border border-white/20 dark:border-white/15;
+      @apply backdrop-blur-[24px] bg-white/65 dark:bg-black/20;
+      @apply border border-white/30 dark:border-white/15;
       @apply shadow-glass-strong dark:shadow-glass-dark-strong;
       @apply transition-all duration-300;
     }

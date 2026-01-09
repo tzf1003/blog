@@ -133,15 +133,20 @@ export function Markdown({ content }: { content: string }) {
               <div className="relative group my-4">
                 <SyntaxHighlighter
                   PreTag="div"
-                  className="!rounded-lg !py-4 !px-4 !mt-0 !bg-slate-100 dark:!bg-slate-800/80"
                   language={language}
                   style={vscDarkPlus}
                   wrapLongLines={true}
                   codeTagProps={{ style: codeBlockStyle }}
                   showLineNumbers={false}
                   customStyle={{
-                    background: undefined,
+                    margin: 0,
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    background: 'rgb(241 245 249)', // slate-100
+                    border: 'none',
+                    boxShadow: 'none',
                   }}
+                  className="dark:!bg-slate-800/80"
                 >
                   {String(children).replace(/\n$/, "")}
                 </SyntaxHighlighter>
