@@ -83,30 +83,23 @@ export function Header({ children }: { children?: React.ReactNode }) {
     // Glass容器类名（不含动态样式）
     const glassClasses = "rounded-2xl";
 
-    // 内容区域动态padding
-    const contentClasses = useMemo(() => {
-        const classes = [
-            "flex justify-between items-center px-4",
-            "transition-all",
-            prefersReducedMotion ? "duration-0" : "duration-300",
-        ];
+    // 内容区域动态padding - 使用内联样式确保平滑过渡
+    const contentStyle = useMemo((): React.CSSProperties => ({
+        paddingTop: isScrolled ? '8px' : '12px',
+        paddingBottom: isScrolled ? '8px' : '12px',
+        transition: prefersReducedMotion 
+            ? 'none' 
+            : 'padding 300ms ease-out',
+    }), [isScrolled, prefersReducedMotion]);
 
-        // 滚动时缩减高度
-        if (isScrolled) {
-            classes.push("py-2");
-        } else {
-            classes.push("py-3");
-        }
-
-        return classes.join(" ");
-    }, [isScrolled, prefersReducedMotion]);
+    const contentClasses = "flex justify-between items-center px-4";
 
     return useMemo(() => (
         <>
             <header className={headerClasses} role="banner">
                 <div className="max-w-7xl mx-auto">
                     <div className={glassClasses} style={glassStyle}>
-                        <div className={contentClasses}>
+                        <div className={contentClasses} style={contentStyle}>
                             {/* Desktop Logo */}
                             <Logo isScrolled={isScrolled} className="hidden md:flex" />
                             
@@ -134,7 +127,7 @@ export function Header({ children }: { children?: React.ReactNode }) {
             {/* Spacer */}
             <div className="h-24" aria-hidden="true"></div>
         </>
-    ), [profile, children, headerClasses, glassClasses, glassStyle, contentClasses, isScrolled]);
+    ), [profile, children, headerClasses, glassClasses, glassStyle, contentClasses, contentStyle, isScrolled]);
 }
 
 
