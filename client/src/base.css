@@ -4,6 +4,23 @@
 
 @layer base {
     /* ============================================
+     * Header CSS Variables - 顶部导航栏过渡变量
+     * ============================================ */
+    :root {
+      --header-bg-default: rgba(255, 255, 255, 0.2);
+      --header-bg-scrolled: rgba(255, 255, 255, 0.3);
+      --header-border-scrolled: rgba(255, 255, 255, 0.3);
+      --header-shadow-default: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+    
+    [data-color-mode="dark"], .dark {
+      --header-bg-default: rgba(0, 0, 0, 0.25);
+      --header-bg-scrolled: rgba(0, 0, 0, 0.35);
+      --header-border-scrolled: rgba(255, 255, 255, 0.2);
+      --header-shadow-default: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ============================================
      * Glass Morphism System - 玻璃态组件系统
      * Requirements: 2.1, 2.2, 2.3, 2.4, 9.4, 9.6
      * ============================================ */
@@ -147,6 +164,16 @@
     .t-cyber-glow {
       @apply text-cyber-green;
       text-shadow: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+    
+    /* 浅色模式 Cyber Green 覆盖 - 使用 emerald 色系提高对比度 */
+    [data-color-mode="light"] .t-cyber,
+    [data-color-mode="light"] .t-cyber-glow {
+      @apply text-emerald-600;
+    }
+    
+    [data-color-mode="light"] .t-cyber-glow {
+      text-shadow: 0 0 10px rgba(5, 150, 105, 0.4), 0 0 20px rgba(5, 150, 105, 0.2);
     }
   
     /* ============================================

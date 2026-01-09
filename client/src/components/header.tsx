@@ -59,34 +59,29 @@ export function Header({ children }: { children?: React.ReactNode }) {
         return baseClasses.join(" ");
     }, [isVisible, prefersReducedMotion]);
 
-    // Glass容器动态类名 - 使用基础glass类 + 动态样式实现平滑过渡
-    const glassClasses = useMemo(() => {
-        const classes = [
-            "rounded-2xl",
-            // 基础玻璃效果样式
-            "backdrop-blur-glass bg-white/20 dark:bg-black/25",
-            // 过渡动画 - 包含所有需要过渡的属性
-            "transition-[backdrop-filter,background-color,border-color,box-shadow,opacity]",
-            prefersReducedMotion ? "duration-0" : "duration-300",
-            "ease-out",
-        ];
+    // Glass容器动态样式 - 使用CSS变量 + 内联style确保过渡动画生效
+    const glassStyle = useMemo((): React.CSSProperties => ({
+        // 始终保持1px边框占位，只改变颜色透明度
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: isScrolled 
+            ? 'var(--header-border-scrolled)' 
+            : 'transparent',
+        backgroundColor: isScrolled
+            ? 'var(--header-bg-scrolled)'
+            : 'var(--header-bg-default)',
+        backdropFilter: isScrolled ? 'blur(20px)' : 'blur(12px)',
+        WebkitBackdropFilter: isScrolled ? 'blur(20px)' : 'blur(12px)',
+        boxShadow: isScrolled
+            ? '0 0 30px rgba(0, 255, 65, 0.4)'
+            : 'var(--header-shadow-default)',
+        transition: prefersReducedMotion 
+            ? 'none' 
+            : 'border-color 300ms ease-out, background-color 300ms ease-out, backdrop-filter 300ms ease-out, box-shadow 300ms ease-out',
+    }), [isScrolled, prefersReducedMotion]);
 
-        // 滚动时增强效果 - 使用细粒度类名控制
-        if (isScrolled) {
-            classes.push(
-                "backdrop-blur-glass-strong bg-white/30 dark:bg-black/35",
-                "border border-white/30 dark:border-white/20",
-                "shadow-glow-md"
-            );
-        } else {
-            classes.push(
-                "border border-transparent",
-                "shadow-deep"
-            );
-        }
-
-        return classes.join(" ");
-    }, [isScrolled, prefersReducedMotion]);
+    // Glass容器类名（不含动态样式）
+    const glassClasses = "rounded-2xl";
 
     // 内容区域动态padding
     const contentClasses = useMemo(() => {
@@ -110,7 +105,7 @@ export function Header({ children }: { children?: React.ReactNode }) {
         <>
             <header className={headerClasses} role="banner">
                 <div className="max-w-7xl mx-auto">
-                    <div className={glassClasses}>
+                    <div className={glassClasses} style={glassStyle}>
                         <div className={contentClasses}>
                             {/* Desktop Logo */}
                             <Logo isScrolled={isScrolled} className="hidden md:flex" />
@@ -139,7 +134,7 @@ export function Header({ children }: { children?: React.ReactNode }) {
             {/* Spacer */}
             <div className="h-24" aria-hidden="true"></div>
         </>
-    ), [profile, children, headerClasses, glassClasses, contentClasses, isScrolled]);
+    ), [profile, children, headerClasses, glassClasses, glassStyle, contentClasses, isScrolled]);
 }
 
 

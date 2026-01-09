@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import { getCookie } from 'typescript-cookie'
 import { DefaultParams, PathPattern, Route, Switch } from 'wouter'
 import Footer from './components/footer'
+import { GlobalBackground } from './components/global-background'
 import { Header } from './components/header'
 import { Padding } from './components/padding'
 import { SkipLink } from './components/ui/skip-link'
@@ -80,6 +81,7 @@ function App() {
     <>
       <ClientConfigContext.Provider value={config}>
         <ProfileContext.Provider value={profile}>
+          <GlobalBackground />
           <Helmet>
             {favicon &&
               <link rel="icon" href={favicon} />}

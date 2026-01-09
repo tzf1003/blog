@@ -69,6 +69,162 @@
   --text-primary: #0F172A;
   --text-secondary: #475569;
   --text-muted: #64748B;
+  
+  /* 浅色模式 Cyber Green - 使用 emerald-600 提高对比度 */
+  --cyber-green: #059669;
+  --cyber-green-dark: #047857;
+  --cyber-green-light: #10B981;
+}
+
+/* ============================================
+ * 浅色模式 Cyber Green 覆盖
+ * 使用 emerald 色系替代荧光绿，提高可读性
+ * ============================================ */
+[data-color-mode="light"] .text-cyber-green {
+  color: #059669 !important;
+}
+
+[data-color-mode="light"] .bg-cyber-green {
+  background-color: #059669 !important;
+}
+
+[data-color-mode="light"] .border-cyber-green {
+  border-color: #059669 !important;
+}
+
+/* 浅色模式下带透明度的 cyber-green */
+[data-color-mode="light"] .text-cyber-green\/80 {
+  color: rgba(5, 150, 105, 0.8) !important;
+}
+
+[data-color-mode="light"] .text-cyber-green\/90 {
+  color: rgba(5, 150, 105, 0.9) !important;
+}
+
+[data-color-mode="light"] .bg-cyber-green\/5 {
+  background-color: rgba(5, 150, 105, 0.05) !important;
+}
+
+[data-color-mode="light"] .bg-cyber-green\/10 {
+  background-color: rgba(5, 150, 105, 0.1) !important;
+}
+
+[data-color-mode="light"] .bg-cyber-green\/15 {
+  background-color: rgba(5, 150, 105, 0.15) !important;
+}
+
+[data-color-mode="light"] .bg-cyber-green\/20 {
+  background-color: rgba(5, 150, 105, 0.2) !important;
+}
+
+[data-color-mode="light"] .bg-cyber-green\/30 {
+  background-color: rgba(5, 150, 105, 0.3) !important;
+}
+
+[data-color-mode="light"] .border-cyber-green\/20 {
+  border-color: rgba(5, 150, 105, 0.2) !important;
+}
+
+[data-color-mode="light"] .border-cyber-green\/30 {
+  border-color: rgba(5, 150, 105, 0.3) !important;
+}
+
+[data-color-mode="light"] .border-cyber-green\/40 {
+  border-color: rgba(5, 150, 105, 0.4) !important;
+}
+
+[data-color-mode="light"] .border-cyber-green\/50 {
+  border-color: rgba(5, 150, 105, 0.5) !important;
+}
+
+[data-color-mode="light"] .border-cyber-green\/80 {
+  border-color: rgba(5, 150, 105, 0.8) !important;
+}
+
+/* 浅色模式 hover 状态 */
+[data-color-mode="light"] .hover\:text-cyber-green:hover {
+  color: #059669 !important;
+}
+
+[data-color-mode="light"] .hover\:bg-cyber-green\/10:hover {
+  background-color: rgba(5, 150, 105, 0.1) !important;
+}
+
+[data-color-mode="light"] .hover\:bg-cyber-green\/15:hover {
+  background-color: rgba(5, 150, 105, 0.15) !important;
+}
+
+[data-color-mode="light"] .hover\:bg-cyber-green\/20:hover {
+  background-color: rgba(5, 150, 105, 0.2) !important;
+}
+
+[data-color-mode="light"] .hover\:border-cyber-green:hover {
+  border-color: #059669 !important;
+}
+
+[data-color-mode="light"] .hover\:border-cyber-green\/40:hover {
+  border-color: rgba(5, 150, 105, 0.4) !important;
+}
+
+[data-color-mode="light"] .hover\:border-cyber-green\/50:hover {
+  border-color: rgba(5, 150, 105, 0.5) !important;
+}
+
+[data-color-mode="light"] .hover\:border-cyber-green\/80:hover {
+  border-color: rgba(5, 150, 105, 0.8) !important;
+}
+
+/* 浅色模式 focus 状态 */
+[data-color-mode="light"] .focus\:ring-cyber-green\/40:focus {
+  --tw-ring-color: rgba(5, 150, 105, 0.4) !important;
+}
+
+[data-color-mode="light"] .focus\:ring-cyber-green\/50:focus {
+  --tw-ring-color: rgba(5, 150, 105, 0.5) !important;
+}
+
+[data-color-mode="light"] .focus\:border-cyber-green\/50:focus {
+  border-color: rgba(5, 150, 105, 0.5) !important;
+}
+
+/* 浅色模式 checked 状态 */
+[data-color-mode="light"] .checked\:bg-cyber-green:checked {
+  background-color: #059669 !important;
+}
+
+[data-color-mode="light"] .checked\:border-cyber-green:checked {
+  border-color: #059669 !important;
+}
+
+[data-color-mode="light"] .checked\:hover\:bg-cyber-green-dark:checked:hover {
+  background-color: #047857 !important;
+}
+
+[data-color-mode="light"] .checked\:hover\:border-cyber-green-dark:checked:hover {
+  border-color: #047857 !important;
+}
+
+/* 浅色模式 focus-visible 状态 */
+[data-color-mode="light"] .focus-visible\:ring-cyber-green:focus-visible {
+  --tw-ring-color: #059669 !important;
+}
+
+/* 浅色模式 glow 阴影调整 */
+[data-color-mode="light"] .shadow-glow,
+[data-color-mode="light"] .shadow-glow-sm {
+  box-shadow: 0 0 15px rgba(5, 150, 105, 0.15) !important;
+}
+
+[data-color-mode="light"] .shadow-glow-md {
+  box-shadow: 0 0 25px rgba(5, 150, 105, 0.2) !important;
+}
+
+[data-color-mode="light"] .hover\:shadow-glow:hover {
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.2) !important;
+}
+
+[data-color-mode="light"] .hover\:shadow-glow-md:hover {
+  box-shadow: 0 0 30px rgba(5, 150, 105, 0.25) !important;
 }
 
 /* ============================================
