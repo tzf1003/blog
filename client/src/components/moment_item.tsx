@@ -29,19 +29,19 @@ export function MomentItem({
     const { createdAt, updatedAt } = moment;
     
     return (
-        <div className="bg-w p-4 rounded-lg">
-            <div className="flex justify-between">
-                <div className="flex items-center space-x-3">
+        <div className="glass rounded-xl p-5 transition-all duration-300 hover:shadow-deep animate-fade-in">
+            <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-3">
                     <img 
                         src={moment.user.avatar} 
                         alt={moment.user.username} 
-                        className="w-8 h-8 rounded-full object-cover"
+                        className="w-10 h-10 rounded-lg object-cover border-2 border-slate-200 dark:border-slate-700"
                     />
                     <div>
-                        <p className="t-primary">
+                        <p className="t-primary font-medium">
                             {moment.user.username}
                         </p>
-                        <p className="space-x-2 t-secondary text-sm"> 
+                        <p className="flex gap-2 t-muted text-sm"> 
                             <span title={new Date(createdAt).toLocaleString()}> 
                                 {createdAt === updatedAt ? timeago(createdAt) : t('feed_card.published$time', { time: timeago(createdAt) })} 
                             </span> 
@@ -54,27 +54,25 @@ export function MomentItem({
                     </div>
                 </div>
                 {canManage && (
-                    <div>
-                        <div className="flex gap-2">
-                            <button
-                                aria-label={t("edit")}
-                                onClick={() => onEdit(moment)}
-                                className="flex-1 flex flex-col items-end justify-center px-2 py bg-secondary bg-button rounded-full transition"
-                            >
-                                <i className="ri-edit-2-line dark:text-neutral-400" />
-                            </button>
-                            <button
-                                aria-label={t("delete.title")}
-                                onClick={() => onDelete(moment.id)}
-                                className="flex-1 flex flex-col items-end justify-center px-2 py bg-secondary bg-button rounded-full transition"
-                            >
-                                <i className="ri-delete-bin-7-line text-red-500" />
-                            </button>
-                        </div>
+                    <div className="flex gap-2">
+                        <button
+                            aria-label={t("edit")}
+                            onClick={() => onEdit(moment)}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer"
+                        >
+                            <i className="ri-edit-2-line t-secondary" />
+                        </button>
+                        <button
+                            aria-label={t("delete.title")}
+                            onClick={() => onDelete(moment.id)}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 cursor-pointer"
+                        >
+                            <i className="ri-delete-bin-7-line text-red-500" />
+                        </button>
                     </div>
                 )}
             </div>
-            <div className="text-black dark:text-white mt-2">
+            <div className="t-primary prose prose-slate dark:prose-invert max-w-none">
                 <Markdown content={moment.content} />
             </div>
         </div>

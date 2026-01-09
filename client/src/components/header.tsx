@@ -19,35 +19,35 @@ export function Header({ children }: { children?: React.ReactNode }) {
 
     return useMemo(() => (
         <>
-            <div className="fixed z-40">
-                <div className="w-screen">
-                    <Padding className="mx-4 mt-4">
-                        <div className="w-full flex justify-between items-center">
+            <div className="fixed top-4 left-4 right-4 z-40 animate-fade-in">
+                <div className="max-w-7xl mx-auto">
+                    <div className="glass-strong rounded-2xl shadow-deep">
+                        <div className="flex justify-between items-center px-4 py-3">
                             <Link aria-label={t('home')} href="/"
-                                className="hidden opacity-0 md:opacity-100 duration-300 mr-auto md:flex flex-row items-center">
-                                <img src={process.env.AVATAR} alt="Avatar" className="w-12 h-12 rounded-2xl border-2" />
-                                <div className="flex flex-col justify-center items-start mx-4">
-                                    <p className="text-xl font-bold dark:text-white">
+                                className="hidden md:flex flex-row items-center group transition-all duration-200 hover:scale-105">
+                                <img src={process.env.AVATAR} alt="Avatar" 
+                                    className="w-11 h-11 rounded-xl border-2 border-slate-200 dark:border-slate-700 transition-all duration-200 group-hover:border-theme" />
+                                <div className="flex flex-col justify-center items-start ml-3">
+                                    <p className="text-lg font-heading font-semibold t-primary">
                                         {process.env.NAME}
                                     </p>
-                                    <p className="text-xs text-neutral-500">
+                                    <p className="text-xs t-muted">
                                         {process.env.DESCRIPTION}
                                     </p>
                                 </div>
                             </Link>
-                            <div
-                                className="w-full md:w-max transition-all duration-500 md:absolute md:left-1/2 md:translate-x-[-50%] flex-row justify-center items-center">
-                                <div
-                                    className="flex flex-row items-center bg-w t-primary rounded-full px-2 shadow-xl shadow-light">
+                            
+                            <div className="flex-1 md:flex-none md:absolute md:left-1/2 md:-translate-x-1/2 flex justify-center">
+                                <div className="flex flex-row items-center gap-1">
                                     <Link aria-label={t('home')} href="/"
-                                        className="visible opacity-100 md:hidden md:opacity-0 duration-300 mr-auto flex flex-row items-center py-2">
+                                        className="md:hidden flex flex-row items-center mr-auto group">
                                         <img src={process.env.AVATAR} alt="Avatar"
-                                            className="w-10 h-10 rounded-full border-2" />
-                                        <div className="flex flex-col justify-center items-start mx-2">
-                                            <p className="text-sm font-bold">
+                                            className="w-9 h-9 rounded-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-200 group-hover:border-theme" />
+                                        <div className="flex flex-col justify-center items-start ml-2">
+                                            <p className="text-sm font-heading font-semibold t-primary">
                                                 {process.env.NAME}
                                             </p>
-                                            <p className="text-xs text-neutral-500">
+                                            <p className="text-xs t-muted">
                                                 {process.env.DESCRIPTION}
                                             </p>
                                         </div>
@@ -57,16 +57,17 @@ export function Header({ children }: { children?: React.ReactNode }) {
                                     <Menu />
                                 </div>
                             </div>
-                            <div className="ml-auto hidden opacity-0 md:opacity-100 duration-300 md:flex flex-row items-center space-x-2">
+                            
+                            <div className="hidden md:flex flex-row items-center gap-2">
                                 <SearchButton />
                                 <LanguageSwitch />
                                 <UserAvatar profile={profile} />
                             </div>
                         </div>
-                    </Padding>
+                    </div>
                 </div>
             </div>
-            <div className="h-20"></div>
+            <div className="h-24"></div>
         </>
     ), [profile, children])
 }
@@ -83,7 +84,11 @@ function NavItem({ menu, title, selected, href, when = true, onClick }: {
         <>
             {when &&
                 <Link href={href}
-                    className={`${menu ? "" : "hidden"} md:block cursor-pointer hover:text-theme duration-300 px-2 py-4 md:p-4 text-sm ${selected ? "text-theme" : "dark:text-white"}`}
+                    className={`${menu ? "" : "hidden"} md:block cursor-pointer transition-all duration-200 px-3 py-2 rounded-lg text-sm font-medium
+                        ${selected 
+                            ? "text-theme bg-theme/10" 
+                            : "t-primary hover:text-theme hover:bg-slate-100 dark:hover:bg-slate-800"
+                        }`}
                     state={{ animate: true }}
                     onClick={onClick}
                 >
@@ -103,12 +108,12 @@ function Menu() {
     }
 
     return (
-        <div className="visible md:hidden flex flex-row items-center">
+        <div className="md:hidden flex flex-row items-center">
             <Popup
                 arrow={false}
                 trigger={<div>
                     <button onClick={() => setOpen(true)}
-                        className="w-10 h-10 rounded-full flex flex-row items-center justify-center">
+                        className="w-9 h-9 rounded-lg flex items-center justify-center t-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer">
                         <i className="ri-menu-line ri-lg" />
                     </button>
                 </div>
@@ -120,15 +125,17 @@ function Menu() {
                 onClose={onClose}
                 closeOnDocumentClick
                 closeOnEscape
-                overlayStyle={{ background: "rgba(0,0,0,0.3)" }}
+                overlayStyle={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}
             >
-                <div className="flex flex-col bg-w rounded-xl p-2 mt-4 w-[50vw]">
-                    <div className="flex flex-row justify-end space-x-2">
+                <div className="flex flex-col glass-strong rounded-2xl p-3 mt-4 w-[60vw] shadow-deep animate-slide-up">
+                    <div className="flex flex-row justify-end gap-2 mb-2">
                         <SearchButton onClose={onClose} />
                         <LanguageSwitch />
                         <UserAvatar profile={profile} />
                     </div>
-                    <NavBar menu={true} onClick={onClose} />
+                    <div className="border-t border-slate-200 dark:border-slate-700 pt-2">
+                        <NavBar menu={true} onClick={onClose} />
+                    </div>
                 </div>
             </Popup>
         </div>
@@ -167,10 +174,10 @@ function LanguageSwitch({ className }: { className?: string }) {
         { code: 'ja', name: '日本語' }
     ]
     return (
-        <div className={className + " flex flex-row items-center"}>
+        <div className={className + " flex items-center"}>
             <Popup trigger={
                 <button title={label} aria-label={label}
-                    className="flex rounded-full border dark:border-neutral-600 px-2 bg-w aspect-[1] items-center justify-center t-primary bg-button">
+                    className="w-9 h-9 rounded-lg flex items-center justify-center t-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer">
                     <i className="ri-translate-2"></i>
                 </button>
             }
@@ -178,15 +185,25 @@ function LanguageSwitch({ className }: { className?: string }) {
                 arrow={false}
                 closeOnDocumentClick
             >
-                <div className="border-card">
-                    <p className='font-bold t-primary'>
+                <div className="glass-strong rounded-xl p-3 mt-2 shadow-deep min-w-[160px] animate-fade-in">
+                    <p className='font-heading font-semibold t-primary mb-2 text-sm'>
                         Languages
                     </p>
-                    {languages.map(({ code, name }) => (
-                        <button key={code} onClick={() => i18n.changeLanguage(code)}>
-                            {name}
-                        </button>
-                    ))}
+                    <div className="space-y-1">
+                        {languages.map(({ code, name }) => (
+                            <button 
+                                key={code} 
+                                onClick={() => i18n.changeLanguage(code)}
+                                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors duration-200 cursor-pointer
+                                    ${i18n.language === code 
+                                        ? 'bg-theme/10 text-theme font-medium' 
+                                        : 't-primary hover:bg-slate-100 dark:hover:bg-slate-800'
+                                    }`}
+                            >
+                                {name}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </Popup>
         </div>
@@ -209,9 +226,9 @@ function SearchButton({ className, onClose }: { className?: string, onClose?: ()
         if (value.length !== 0)
             setLocation(`/search/${key}`)
     }
-    return (<div className={className + " flex flex-row items-center"}>
+    return (<div className={className + " flex items-center"}>
         <button onClick={() => setIsOpened(true)} title={label} aria-label={label}
-            className="flex rounded-full border dark:border-neutral-600 px-2 bg-w aspect-[1] items-center justify-center t-primary bg-button">
+            className="w-9 h-9 rounded-lg flex items-center justify-center t-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer">
             <i className="ri-search-line"></i>
         </button>
         <ReactModal
@@ -232,15 +249,17 @@ function SearchButton({ className, onClose }: { className?: string, onClose?: ()
                     justifyContent: "center",
                     alignItems: "center",
                     background: "none",
+                    minWidth: "min(90vw, 500px)",
                 },
                 overlay: {
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    backdropFilter: "blur(8px)",
                     zIndex: 1000,
                 },
             }}
             onRequestClose={() => setIsOpened(false)}
         >
-            <div className="bg-w w-full flex flex-row items-center justify-between p-4 space-x-4">
+            <div className="glass-strong w-full flex flex-row items-center justify-between p-4 gap-3 shadow-deep animate-slide-up">
                 <Input value={value} setValue={setValue} placeholder={t('article.search.placeholder')}
                     autofocus
                     onSubmit={onSearch} />
@@ -260,20 +279,26 @@ function UserAvatar({ className, profile, onClose }: { className?: string, profi
 
 
     return (
-        <> {config.get<boolean>('login.enabled') && <div className={className + " flex flex-row items-center"}>
+        <> {config.get<boolean>('login.enabled') && <div className={className + " flex items-center"}>
             {profile?.avatar ? <>
-                <div className="w-8 relative">
-                    <img src={profile.avatar} alt="Avatar" className="w-8 h-8 rounded-full border" />
-                    <div className="z-50 absolute left-0 top-0 w-10 h-8 opacity-0 hover:opacity-100 duration-300">
-                        <IconSmall label={t('logout')} name="ri-logout-circle-line" onClick={() => {
+                <div className="relative group">
+                    <img src={profile.avatar} alt="Avatar" 
+                        className="w-9 h-9 rounded-lg border-2 border-slate-200 dark:border-slate-700 transition-all duration-200 group-hover:border-theme cursor-pointer" />
+                    <button
+                        onClick={() => {
                             removeCookie("token")
                             window.location.reload()
-                        }} hover={false} />
-                    </div>
+                        }}
+                        title={t('logout')}
+                        aria-label={t('logout')}
+                        className="absolute inset-0 flex items-center justify-center bg-slate-900/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                    >
+                        <i className="ri-logout-circle-line text-white text-lg" />
+                    </button>
                 </div>
             </> : <>
                 <button onClick={() => setIsOpened(true)} title={label} aria-label={label}
-                    className="flex rounded-full border dark:border-neutral-600 px-2 bg-w aspect-[1] items-center justify-center t-primary bg-button">
+                    className="w-9 h-9 rounded-lg flex items-center justify-center t-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer">
                     <i className="ri-user-received-line"></i>
                 </button>
             </>}

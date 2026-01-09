@@ -36,7 +36,7 @@ export function AdjacentSection({id, setError}: { id: string, setError: (error: 
             });
     }, [id, setError]);
     return (
-        <div className="rounded-2xl bg-w m-2 grid grid-cols-1 sm:grid-cols-2">
+        <div className="glass rounded-2xl m-4 grid grid-cols-1 sm:grid-cols-2 overflow-hidden shadow-light animate-fade-in">
             <AdjacentCard data={adjacentFeeds?.previousFeed} type="previous"/>
             <AdjacentCard data={adjacentFeeds?.nextFeed} type="next"/>
         </div>
@@ -45,37 +45,37 @@ export function AdjacentSection({id, setError}: { id: string, setError: (error: 
 
 export function AdjacentCard({data, type}: { data: AdjacentFeed | null | undefined, type: "previous" | "next" }) {
     const direction = type === "previous" ? "text-start" : "text-end"
-    const radius = type === "previous" ? "rounded-t-2xl sm:rounded-none sm:rounded-l-2xl" : "rounded-b-2xl sm:rounded-none sm:rounded-r-2xl"
     const {t} = useTranslation()
     if (!data) {
-        return (<div className="w-full p-6 duration-300">
-            <p className={`t-secondary w-full ${direction}`}>
-                {type === "previous" ? "Previous" : "Next"}
+        return (<div className="w-full p-8 transition-colors duration-200">
+            <p className={`t-muted w-full text-sm font-medium mb-2 ${direction}`}>
+                {type === "previous" ? "← Previous" : "Next →"}
             </p>
-            <h1 className={`text-xl text-gray-700 dark:text-white text-pretty truncate ${direction}`}>
+            <h1 className={`text-lg t-secondary text-pretty truncate ${direction}`}>
                 {t('no_more')}
             </h1>
         </div>);
     }
     return (
         <Link href={`/feed/${data.id}`} target="_blank"
-              className={`w-full p-6 duration-300 bg-button ${radius}`}>
-            <p className={`t-secondary w-full ${direction}`}>
-                {type === "previous" ? "Previous" : "Next"}
+              className={`block w-full p-8 transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer group
+                  ${type === "previous" ? "sm:border-r border-slate-200 dark:border-slate-700" : ""}`}>
+            <p className={`t-muted w-full text-sm font-medium mb-3 group-hover:text-theme transition-colors duration-200 ${direction}`}>
+                {type === "previous" ? "← Previous" : "Next →"}
             </p>
-            <h1 className={`text-xl font-bold text-gray-700 dark:text-white text-pretty truncate ${direction}`}>
+            <h1 className={`text-xl font-heading font-semibold t-primary text-pretty truncate group-hover:text-theme transition-colors duration-200 mb-2 ${direction}`}>
                 {data.title}
             </h1>
-            <p className={`space-x-2 ${direction}`}>
-                <span className="text-gray-400 text-sm" title={new Date(data.createdAt).toLocaleString()}>
+            <div className={`flex gap-2 mt-2 ${type === "next" ? "justify-end" : ""}`}>
+                <span className="t-muted text-sm" title={new Date(data.createdAt).toLocaleString()}>
                     {data.createdAt === data.updatedAt ? timeago(data.createdAt) : t('feed_card.published$time', {time: timeago(data.createdAt)})}
                 </span>
                 {data.createdAt !== data.updatedAt &&
-                    <span className="text-gray-400 text-sm" title={new Date(data.updatedAt).toLocaleString()}>
+                    <span className="t-muted text-sm" title={new Date(data.updatedAt).toLocaleString()}>
                         {t('feed_card.updated$time', {time: timeago(data.updatedAt)})}
                     </span>
                 }
-            </p>
+            </div>
         </Link>
     )
 }

@@ -185,36 +185,35 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
           />
         </Helmet>
       )}
-      <div className="w-full flex flex-row justify-center ani-show">
+      <div className="w-full flex justify-center animate-fade-in">
         {error && (
-          <>
-            <div className="flex flex-col wauto rounded-2xl bg-w m-2 p-6 items-center justify-center space-y-2">
-              <h1 className="text-xl font-bold t-primary">{error}</h1>
-              {error === "Not found" && id === "about" && (
-                <Tips value={t("about.notfound")} />
-              )}
-              <Button
-                title={t("index.back")}
-                onClick={() => (window.location.href = "/")}
-              />
-            </div>
-          </>
+          <div className="flex flex-col wauto glass-strong rounded-2xl m-4 p-8 items-center justify-center gap-4 shadow-deep">
+            <h1 className="text-2xl font-heading font-semibold t-primary">{error}</h1>
+            {error === "Not found" && id === "about" && (
+              <Tips value={t("about.notfound")} />
+            )}
+            <Button
+              title={t("index.back")}
+              onClick={() => (window.location.href = "/")}
+            />
+          </div>
         )}
         {feed && !error && (
           <>
             <div className="xl:w-64" />
             <main className="wauto">
               <article
-                className="rounded-2xl bg-w m-2 px-6 py-4"
+                className="glass-strong rounded-2xl m-4 px-8 py-8 shadow-light"
                 aria-label={feed.title ?? "Unnamed"}
               >
-                <div className="flex justify-between">
-                  <div>
-                    <div className="mt-1 mb-1 flex gap-1">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex-1">
+                    <div className="flex flex-wrap gap-3 mb-3">
                       <p
-                        className="text-gray-400 text-[12px]"
+                        className="t-muted text-sm flex items-center gap-1"
                         title={new Date(feed.createdAt).toLocaleString()}
                       >
+                        <i className="ri-calendar-line"></i>
                         {t("feed_card.published$time", {
                           time: timeago(feed.createdAt),
                         })}
@@ -222,78 +221,91 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
 
                       {feed.createdAt !== feed.updatedAt && (
                         <p
-                          className="text-gray-400 text-[12px]"
+                          className="t-muted text-sm flex items-center gap-1"
                           title={new Date(feed.updatedAt).toLocaleString()}
                         >
+                          <i className="ri-refresh-line"></i>
                           {t("feed_card.updated$time", {
                             time: timeago(feed.updatedAt),
                           })}
                         </p>
                       )}
+                      
+                      {counterEnabled && (
+                        <p className='t-muted text-sm flex items-center gap-2'>
+                          <span className="flex items-center gap-1">
+                            <i className="ri-eye-line"></i>
+                            {feed.pv}
+                          </span>
+                          <span>|</span>
+                          <span className="flex items-center gap-1">
+                            <i className="ri-user-line"></i>
+                            {feed.uv}
+                          </span>
+                        </p>
+                      )}
                     </div>
-                    {counterEnabled && <p className='text-[12px] text-gray-400 font-normal link-line'>
-                      <span> {t("count.pv")} </span>
-                      <span>
-                        {feed.pv}
-                      </span>
-                      <span> |</span>
-                      <span> {t("count.uv")} </span>
-                      <span>
-                        {feed.uv}
-                      </span>
-                    </p>}
-                    <div className="flex flex-row items-center">
-                      <h1 className="text-2xl font-bold t-primary break-all">
-                        {feed.title}
-                      </h1>
-                      <div className="flex-1 w-0" />
+                    
+                    <h1 className="text-4xl font-heading font-bold t-primary break-words leading-tight">
+                      {feed.title}
+                    </h1>
+                  </div>
+                  
+                  {profile?.permission && (
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        aria-label={top > 0 ? t("untop.title") : t("top.title")}
+                        onClick={topFeed}
+                        className={`w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 cursor-pointer
+                          ${top > 0 
+                            ? "bg-theme text-slate-900 shadow-glow" 
+                            : "glass hover:bg-slate-100 dark:hover:bg-slate-800 t-secondary"
+                          }`}
+                      >
+                        <i className="ri-pushpin-line" />
+                      </button>
+                      <Link
+                        aria-label={t("edit")}
+                        href={`/writing/${feed.id}`}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg glass hover:bg-slate-100 dark:hover:bg-slate-800 t-secondary transition-all duration-200 cursor-pointer"
+                      >
+                        <i className="ri-edit-2-line" />
+                      </Link>
+                      <button
+                        aria-label={t("delete.title")}
+                        onClick={deleteFeed}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg glass hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 cursor-pointer"
+                      >
+                        <i className="ri-delete-bin-7-line text-red-500" />
+                      </button>
                     </div>
-                  </div>
-                  <div className="pt-2">
-                    {profile?.permission && (
-                      <div className="flex gap-2">
-                        <button
-                          aria-label={top > 0 ? t("untop.title") : t("top.title")}
-                          onClick={topFeed}
-                          className={`flex-1 flex flex-col items-end justify-center px-2 py rounded-full transition ${top > 0 ? "bg-theme text-white hover:bg-theme-hover active:bg-theme-active" : "bg-secondary bg-button dark:text-neutral-400"}`}
-                        >
-                          <i className="ri-skip-up-line" />
-                        </button>
-                        <Link
-                          aria-label={t("edit")}
-                          href={`/writing/${feed.id}`}
-                          className="flex-1 flex flex-col items-end justify-center px-2 py bg-secondary bg-button rounded-full transition"
-                        >
-                          <i className="ri-edit-2-line dark:text-neutral-400" />
-                        </Link>
-                        <button
-                          aria-label={t("delete.title")}
-                          onClick={deleteFeed}
-                          className="flex-1 flex flex-col items-end justify-center px-2 py bg-secondary bg-button rounded-full transition"
-                        >
-                          <i className="ri-delete-bin-7-line text-red-500" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
-                <Markdown content={feed.content} />
-                <div className="mt-6 flex flex-col gap-2">
+                
+                <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-heading prose-headings:font-semibold prose-a:text-theme prose-a:no-underline hover:prose-a:underline">
+                  <Markdown content={feed.content} />
+                </div>
+                
+                <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col gap-4">
                   {feed.hashtags.length > 0 && (
-                    <div className="flex flex-row flex-wrap gap-x-2">
+                    <div className="flex flex-wrap gap-2">
                       {feed.hashtags.map(({ name }, index) => (
                         <HashTag key={index} name={name} />
                       ))}
                     </div>
                   )}
-                  <div className="flex flex-row items-center">
+                  <div className="flex items-center gap-3">
                     <img
                       src={feed.user.avatar || "/avatar.png"}
-                      className="w-8 h-8 rounded-full"
+                      className="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700"
+                      alt={feed.user.username}
                     />
-                    <div className="ml-2">
-                      <span className="text-gray-400 text-sm cursor-default">
+                    <div>
+                      <span className="t-primary font-medium block">
                         {feed.user.username}
+                      </span>
+                      <span className="t-muted text-sm">
+                        Author
                       </span>
                     </div>
                   </div>
@@ -304,9 +316,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
               <div className="h-16" />
             </main>
             <div className="w-80 hidden lg:block relative">
-              <div
-                  className={`start-0 end-0 top-[5.5rem] sticky`}
-              >
+              <div className="start-0 end-0 top-24 sticky">
                 <TOC />
               </div>
             </div>
@@ -326,9 +336,9 @@ export function TOCHeader({ TOC }: { TOC: () => JSX.Element }) {
     <div className="lg:hidden">
       <button
         onClick={() => setIsOpened(true)}
-        className="w-10 h-10 rounded-full flex flex-row items-center justify-center"
+        className="w-9 h-9 rounded-lg flex items-center justify-center t-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer"
       >
-        <i className="ri-menu-2-fill t-primary ri-lg"></i>
+        <i className="ri-menu-2-fill ri-lg"></i>
       </button>
       <ReactModal
         isOpen={isOpened}
@@ -350,13 +360,14 @@ export function TOCHeader({ TOC }: { TOC: () => JSX.Element }) {
             background: "none",
           },
           overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            backdropFilter: "blur(8px)",
             zIndex: 1000,
           },
         }}
         onRequestClose={() => setIsOpened(false)}
       >
-        <div className="w-[80vw] sm:w-[60vw] lg:w-[40vw] overflow-clip relative t-primary">
+        <div className="w-[85vw] sm:w-[70vw] lg:w-[50vw] glass-strong rounded-2xl p-6 shadow-deep animate-slide-up overflow-auto max-h-[80vh]">
           <TOC />
         </div>
       </ReactModal>
@@ -408,35 +419,37 @@ function CommentInput({
       });
   }
   return (
-      <div className="w-full rounded-2xl bg-w t-primary p-6 items-end flex flex-col">
-      <div className="flex flex-col w-full items-start mb-4">
-        <label htmlFor="comment">{t("comment.title")}</label>
+      <div className="w-full glass-strong rounded-2xl t-primary p-8 m-4 shadow-light">
+      <div className="flex flex-col w-full items-start mb-6">
+        <h3 className="text-xl font-heading font-semibold t-primary">{t("comment.title")}</h3>
       </div>
       {profile ? (<>
         <textarea
           id="comment"
           placeholder={t("comment.placeholder.title")}
-          className="bg-w w-full h-24 rounded-lg"
+          className="glass w-full min-h-32 rounded-xl p-4 t-primary placeholder:t-muted focus:outline-none focus:ring-2 focus:ring-theme/50 transition-all duration-200 resize-y"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
-        <button
-          className="mt-4 bg-theme text-white px-4 py-2 rounded-full"
-          onClick={submit}
-        >
-          {t("comment.submit")}
-        </button>
-      </>) : (
-        <div className="flex flex-row w-full items-center justify-center space-x-2 py-12">
+        <div className="flex justify-end mt-4">
           <button
-            className="mt-2 bg-theme text-white px-4 py-2 rounded-full"
+            className="btn-primary"
+            onClick={submit}
+          >
+            {t("comment.submit")}
+          </button>
+        </div>
+      </>) : (
+        <div className="flex items-center justify-center w-full py-12">
+          <button
+            className="btn-primary"
             onClick={() => setIsOpened(true)}
           >
             {t("login.required")}
           </button>
         </div>
       )}
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      {error && <p className="text-red-500 text-sm mt-3 px-1">{error}</p>}
       <AlertUI />
       <LoginModal />
     </div>
@@ -485,23 +498,21 @@ function Comments({ id }: { id: string }) {
   return (
     <>
       {config.get<boolean>('comment.enabled') &&
-        <div className="m-2 flex flex-col justify-center items-center">
+        <div className="m-4 flex flex-col justify-center items-center gap-4">
           <CommentInput id={id} onRefresh={loadComments} />
           {error && (
-            <>
-              <div className="flex flex-col wauto rounded-2xl bg-w t-primary m-2 p-6 items-center justify-center">
-                <h1 className="text-xl font-bold t-primary">{error}</h1>
-                <button
-                  className="mt-2 bg-theme text-white px-4 py-2 rounded-full"
-                  onClick={loadComments}
-                >
-                  {t("reload")}
-                </button>
-              </div>
-            </>
+            <div className="flex flex-col w-full glass-strong rounded-2xl t-primary p-8 items-center justify-center gap-4 shadow-light">
+              <h3 className="text-lg font-heading font-semibold t-primary">{error}</h3>
+              <button
+                className="btn-primary"
+                onClick={loadComments}
+              >
+                {t("reload")}
+              </button>
+            </div>
           )}
           {comments.length > 0 && (
-            <div className="w-full">
+            <div className="w-full flex flex-col gap-3">
               {comments.map((comment) => (
                 <CommentItem
                   key={comment.id}
@@ -550,48 +561,49 @@ function CommentItem({
       })
   }
   return (
-    <div className="flex flex-row items-start rounded-xl mt-2">
+    <div className="flex items-start gap-3 glass rounded-xl p-5 transition-all duration-200 hover:shadow-light">
       <img
         src={comment.user.avatar || ""}
-        className="w-8 h-8 rounded-full mt-4"
+        className="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700 flex-shrink-0"
+        alt={comment.user.username}
       />
-      <div className="flex flex-col flex-1 w-0 ml-2 bg-w rounded-xl p-4">
-        <div className="flex flex-row">
-          <span className="t-primary text-base font-bold">
+      <div className="flex flex-col flex-1 min-w-0">
+        <div className="flex items-center justify-between mb-2">
+          <span className="t-primary text-base font-semibold">
             {comment.user.username}
           </span>
-          <div className="flex-1 w-0" />
-          <span
-            title={new Date(comment.createdAt).toLocaleString()}
-            className="text-gray-400 text-sm"
-          >
-            {timeago(comment.createdAt)}
-          </span>
-        </div>
-        <p className="t-primary break-words">{comment.content}</p>
-        <div className="flex flex-row justify-end">
-          {(profile?.permission || profile?.id == comment.user.id) && (
-            <Popup
-              arrow={false}
-              trigger={
-                <button className="px-2 py bg-secondary rounded-full">
-                  <i className="ri-more-fill t-secondary"></i>
-                </button>
-              }
-              position="left center"
+          <div className="flex items-center gap-2">
+            <span
+              title={new Date(comment.createdAt).toLocaleString()}
+              className="t-muted text-sm"
             >
-              <div className="flex flex-row self-end mr-2">
-                <button
-                  onClick={deleteComment}
-                  aria-label={t("delete.comment.title")}
-                  className="px-2 py bg-secondary rounded-full"
-                >
-                  <i className="ri-delete-bin-2-line t-secondary"></i>
-                </button>
-              </div>
-            </Popup>
-          )}
+              {timeago(comment.createdAt)}
+            </span>
+            {(profile?.permission || profile?.id == comment.user.id) && (
+              <Popup
+                arrow={false}
+                trigger={
+                  <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer">
+                    <i className="ri-more-fill t-secondary"></i>
+                  </button>
+                }
+                position="left center"
+              >
+                <div className="glass-strong rounded-xl p-2 shadow-deep animate-fade-in">
+                  <button
+                    onClick={deleteComment}
+                    aria-label={t("delete.comment.title")}
+                    className="w-full px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 cursor-pointer flex items-center gap-2"
+                  >
+                    <i className="ri-delete-bin-2-line text-red-500"></i>
+                    <span className="text-red-500 text-sm">{t("delete.comment.title")}</span>
+                  </button>
+                </div>
+              </Popup>
+            )}
+          </div>
         </div>
+        <p className="t-secondary break-words leading-relaxed">{comment.content}</p>
       </div>
       <ConfirmUI />
       <AlertUI />

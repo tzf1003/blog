@@ -76,21 +76,31 @@ export function FeedsPage() {
                 <meta property="og:url" content={document.URL} />
             </Helmet>
             <Waiting for={feeds.draft.size + feeds.normal.size + feeds.unlisted.size > 0 || status === 'idle'}>
-                <main className="w-full flex flex-col justify-center items-center mb-8">
-                    <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
-                        <p>
+                <main className="w-full flex flex-col justify-center items-center mb-16 animate-fade-in">
+                    <div className="wauto text-start py-8">
+                        <h1 className="text-5xl font-heading font-bold t-primary mb-3">
                             {listState === 'draft' ? t('draft_bin') : listState === 'normal' ? t('article.title') : t('unlisted')}
-                        </p>
-                        <div className="flex flex-row justify-between">
-                            <p className="text-sm mt-4 text-neutral-500 font-normal">
+                        </h1>
+                        <div className="flex flex-wrap justify-between items-center gap-4 mt-6">
+                            <p className="text-base t-muted font-medium">
                                 {t('article.total$count', { count: feeds[listState]?.size })}
                             </p>
                             {profile?.permission &&
-                                <div className="flex flex-row space-x-4">
-                                    <Link href={listState === 'draft' ? '/?type=normal' : '/?type=draft'} className={`text-sm mt-4 text-neutral-500 font-normal ${listState === 'draft' ? "text-theme" : ""}`}>
+                                <div className="flex gap-3">
+                                    <Link href={listState === 'draft' ? '/?type=normal' : '/?type=draft'} 
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
+                                            ${listState === 'draft' 
+                                                ? "bg-theme/10 text-theme" 
+                                                : "t-secondary hover:bg-slate-100 dark:hover:bg-slate-800"
+                                            }`}>
                                         {t('draft_bin')}
                                     </Link>
-                                    <Link href={listState === 'unlisted' ? '/?type=normal' : '/?type=unlisted'} className={`text-sm mt-4 text-neutral-500 font-normal ${listState === 'unlisted' ? "text-theme" : ""}`}>
+                                    <Link href={listState === 'unlisted' ? '/?type=normal' : '/?type=unlisted'} 
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer
+                                            ${listState === 'unlisted' 
+                                                ? "bg-theme/10 text-theme" 
+                                                : "t-secondary hover:bg-slate-100 dark:hover:bg-slate-800"
+                                            }`}>
                                         {t('unlisted')}
                                     </Link>
                                 </div>
@@ -98,25 +108,27 @@ export function FeedsPage() {
                         </div>
                     </div>
                     <Waiting for={status === 'idle'}>
-                        <div className="wauto flex flex-col ani-show">
+                        <div className="wauto flex flex-col gap-4">
                             {feeds[listState].data.map(({ id, ...feed }: any) => (
                                 <FeedCard key={id} id={id} {...feed} />
                             ))}
                         </div>
-                        <div className="wauto flex flex-row items-center mt-4 ani-show">
-                            {page > 1 &&
+                        <div className="wauto flex items-center justify-between mt-8 gap-4">
+                            {page > 1 ? (
                                 <Link href={`/?type=${listState}&page=${(page - 1)}`}
-                                    className={`text-sm font-normal rounded-full px-4 py-2 text-white bg-theme`}>
+                                    className="btn-primary flex items-center gap-2">
+                                    <i className="ri-arrow-left-line"></i>
                                     {t('previous')}
                                 </Link>
-                            }
-                            <div className="flex-1" />
-                            {feeds[listState]?.hasNext &&
+                            ) : <div />}
+                            
+                            {feeds[listState]?.hasNext && (
                                 <Link href={`/?type=${listState}&page=${(page + 1)}`}
-                                    className={`text-sm font-normal rounded-full px-4 py-2 text-white bg-theme`}>
+                                    className="btn-primary flex items-center gap-2">
                                     {t('next')}
+                                    <i className="ri-arrow-right-line"></i>
                                 </Link>
-                            }
+                            )}
                         </div>
                     </Waiting>
                 </main>

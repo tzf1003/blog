@@ -40,17 +40,17 @@ function Footer() {
     };
 
     return (
-        <footer>
+        <footer className="mt-16">
             <Helmet>
                 <link rel="alternate" type="application/rss+xml" title={siteName} href="/sub/rss.xml" />
                 <link rel="alternate" type="application/atom+xml" title={siteName} href="/sub/atom.xml" />
                 <link rel="alternate" type="application/json" title={siteName} href="/sub/rss.json" />
             </Helmet>
-            <div className="flex flex-col mb-8 space-y-2 justify-center items-center t-primary ani-show">
-                {footerHtml && <div dangerouslySetInnerHTML={{ __html: footerHtml }} />}
-                <p className='text-sm text-neutral-500 font-normal link-line'>
+            <div className="flex flex-col mb-8 gap-4 justify-center items-center t-primary animate-fade-in">
+                {footerHtml && <div dangerouslySetInnerHTML={{ __html: footerHtml }} className="text-center" />}
+                <p className='text-sm t-muted font-normal link-line'>
                     <span onDoubleClick={() => {
-                        if(doubleClickTimes >= 2){ // actually need 3 times doubleClick
+                        if(doubleClickTimes >= 2){
                             setDoubleClickTimes(0)
                             if(!loginEnabled) {
                                 setIsOpened(true)
@@ -59,42 +59,45 @@ function Footer() {
                             setDoubleClickTimes(doubleClickTimes + 1)
                         }
                     }}>
-                        © {new Date().getFullYear()} Powered by <a className='hover:underline' href="https://github.com/openRin/Rin" target="_blank">Rin</a>
+                        © {new Date().getFullYear()} Powered by <a className='hover:underline hover:text-theme transition-colors duration-200' href="https://github.com/openRin/Rin" target="_blank">Rin</a>
                     </span>
                     {config.get<boolean>('rss') && <>
                         <Spliter />
                         <Popup trigger={
-                            <button className="hover:underline" type="button">
+                            <button className="hover:underline hover:text-theme transition-colors duration-200 cursor-pointer" type="button">
                                 RSS
                             </button>
                         }
                             position="top center"
                             arrow={false}
                             closeOnDocumentClick>
-                            <div className="border-card">
-                                <p className='font-bold t-primary'>
+                            <div className="glass-strong rounded-xl p-4 shadow-deep min-w-[200px] animate-fade-in">
+                                <p className='font-heading font-semibold t-primary mb-3 text-sm'>
                                     {t('footer.rss')}
                                 </p>
-                                <p>
-                                    <a href='/sub/rss.xml'>
+                                <div className="flex gap-2 text-sm">
+                                    <a href='/sub/rss.xml' className="hover:text-theme transition-colors duration-200">
                                         RSS
-                                    </a> <Spliter />
-                                    <a href='/sub/atom.xml'>
+                                    </a> 
+                                    <Spliter />
+                                    <a href='/sub/atom.xml' className="hover:text-theme transition-colors duration-200">
                                         Atom
-                                    </a> <Spliter />
-                                    <a href='/sub/rss.json'>
+                                    </a> 
+                                    <Spliter />
+                                    <a href='/sub/rss.json' className="hover:text-theme transition-colors duration-200">
                                         JSON
                                     </a>
-                                </p>
-
+                                </div>
                             </div>
                         </Popup>
                     </>}
                 </p>
-                <div className="w-fit-content inline-flex rounded-full border border-zinc-200 p-[3px] dark:border-zinc-700">
-                    <ThemeButton mode='light' current={modeState} label="Toggle light mode" icon="ri-sun-line" onClick={setMode} />
-                    <ThemeButton mode='system' current={modeState} label="Toggle system mode" icon="ri-computer-line" onClick={setMode} />
-                    <ThemeButton mode='dark' current={modeState} label="Toggle dark mode" icon="ri-moon-line" onClick={setMode} />
+                <div className="glass rounded-full p-1 shadow-light">
+                    <div className="flex gap-1">
+                        <ThemeButton mode='light' current={modeState} label="Toggle light mode" icon="ri-sun-line" onClick={setMode} />
+                        <ThemeButton mode='system' current={modeState} label="Toggle system mode" icon="ri-computer-line" onClick={setMode} />
+                        <ThemeButton mode='dark' current={modeState} label="Toggle dark mode" icon="ri-moon-line" onClick={setMode} />
+                    </div>
                 </div>
             </div>
             <LoginModal />
@@ -111,7 +114,11 @@ function Spliter() {
 
 function ThemeButton({ current, mode, label, icon, onClick }: { current: ThemeMode, label: string, mode: ThemeMode, icon: string, onClick: (mode: ThemeMode) => void }) {
     return (<button aria-label={label} type="button" onClick={() => onClick(mode)}
-        className={`rounded-inherit inline-flex h-[32px] w-[32px] items-center justify-center border-0 t-primary ${current === mode ? "bg-w rounded-full shadow-xl shadow-light" : ""}`}>
+        className={`rounded-lg inline-flex h-9 w-9 items-center justify-center t-primary transition-all duration-200 cursor-pointer
+            ${current === mode 
+                ? "bg-theme text-slate-900 shadow-glow" 
+                : "hover:bg-slate-100 dark:hover:bg-slate-800"
+            }`}>
         <i className={`${icon}`} />
     </button>)
 }

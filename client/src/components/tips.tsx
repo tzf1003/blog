@@ -38,9 +38,9 @@ export function Tips({ value, type = 'tips' }: { value: string, type?: 'note' | 
 export function TipsPage({ children }: { children: React.ReactNode }) {
     const { t } = useTranslation();
     return (
-        <div className="w-full flex flex-row justify-center ani-show">
-            <div className="flex flex-col wauto rounded-2xl bg-w m-2 p-6 items-center justify-center space-y-2">
-                <h1 className="text-xl font-bold t-primary"> Oops! </h1>
+        <div className="w-full flex justify-center animate-fade-in">
+            <div className="flex flex-col wauto glass-strong rounded-2xl m-4 p-8 items-center justify-center gap-4 shadow-deep">
+                <h1 className="text-2xl font-heading font-semibold t-primary"> Oops! </h1>
                 {children}
                 <Button
                     title={t("index.back")}

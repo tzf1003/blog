@@ -56,19 +56,20 @@ export function useAlert() {
                     maxWidth: '40em'
                 },
                 overlay: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                    backdropFilter: 'blur(8px)',
                     zIndex: 1000
                 }
             }}
         >
-            <div className="flex flex-col items-start p-4 bg-w space-y-4 w-full min-w-56 sm:min-w-96">
-                <h1 className="text-2xl font-bold t-primary">
+            <div className="flex flex-col items-start p-6 glass-strong space-y-4 w-full min-w-56 sm:min-w-96 shadow-deep animate-slide-up">
+                <h1 className="text-2xl font-heading font-semibold t-primary">
                     {t("alert")}
                 </h1>
-                <p className="text-base t-primary">
+                <p className="text-base t-secondary">
                     {alert?.message}
                 </p>
-                <div className="w-full flex flex-row items-center justify-center space-x-2 mt-4">
+                <div className="w-full flex justify-center mt-2">
                     <Button onClick={close} title={t('confirm')} />
                 </div>
             </div>
@@ -118,19 +119,20 @@ export function useConfirm() {
                     maxWidth: '40em'
                 },
                 overlay: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                    backdropFilter: 'blur(8px)',
                     zIndex: 1000
                 }
             }}
         >
-            <div className="flex flex-col items-start p-4 bg-w space-y-4 w-full min-w-56 sm:min-w-96">
-                <h1 className="text-2xl font-bold t-primary">
+            <div className="flex flex-col items-start p-6 glass-strong space-y-4 w-full min-w-56 sm:min-w-96 shadow-deep animate-slide-up">
+                <h1 className="text-2xl font-heading font-semibold t-primary">
                     {confirm?.title}
                 </h1>
-                <p className="text-base t-primary">
+                <p className="text-base t-secondary">
                     {confirm?.message}
                 </p>
-                <div className="w-full flex flex-row items-center justify-center space-x-2 mt-4">
+                <div className="w-full flex items-center justify-center gap-3 mt-2">
                     <ButtonWithLoading
                         loading={loading}
                         onClick={async () => {
