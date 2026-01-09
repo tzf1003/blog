@@ -88,6 +88,12 @@
       @apply transition-all duration-300;
     }
 
+    /* Glass 内 pre 标签样式覆盖 */
+    .glass pre {
+      background: none;
+      margin: 0;
+    }
+
     /* ============================================
      * Background Utilities - 背景工具类
      * ============================================ */
