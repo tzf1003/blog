@@ -297,7 +297,7 @@ textarea:focus {
  * Markdown Styles - Markdown样式
  * ============================================ */
 .wmde-markdown {
-  @apply bg-w;
+  @apply bg-transparent;
   font-family: 'DM Sans', sans-serif;
   transition: var(--theme-transition);
 }
