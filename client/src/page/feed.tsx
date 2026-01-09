@@ -203,12 +203,12 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
             <div className="xl:w-64" />
             <main className="wauto">
               <article
-                className="glass-strong rounded-2xl m-4 px-8 py-8 shadow-light"
+                className="glass-strong rounded-2xl m-4 px-6 sm:px-10 md:px-14 py-10 md:py-14 shadow-light"
                 aria-label={feed.title ?? "Unnamed"}
               >
-                <div className="flex justify-between items-start mb-6">
+                <header className="flex justify-between items-start mb-10">
                   <div className="flex-1">
-                    <div className="flex flex-wrap gap-3 mb-3">
+                    <div className="flex flex-wrap gap-3 mb-4">
                       <p
                         className="t-muted text-sm flex items-center gap-1"
                         title={new Date(feed.createdAt).toLocaleString()}
@@ -246,7 +246,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       )}
                     </div>
                     
-                    <h1 className="text-4xl font-heading font-bold t-primary break-words leading-tight">
+                    <h1 className="text-3xl sm:text-4xl font-heading font-bold t-primary break-words leading-tight">
                       {feed.title}
                     </h1>
                   </div>
@@ -280,13 +280,13 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       </button>
                     </div>
                   )}
-                </div>
+                </header>
                 
-                <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-heading prose-headings:font-semibold prose-a:text-theme prose-a:no-underline hover:prose-a:underline">
+                <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-heading prose-headings:font-semibold prose-a:text-theme prose-a:no-underline hover:prose-a:underline prose-lg">
                   <Markdown content={feed.content} />
                 </div>
                 
-                <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col gap-4">
+                <footer className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col gap-5">
                   {feed.hashtags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {feed.hashtags.map(({ name }, index) => (
@@ -294,15 +294,15 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       ))}
                     </div>
                   )}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <img
                       src={feed.user.avatar || "/avatar.png"}
-                      className="w-10 h-10 rounded-lg border-2 border-slate-200 dark:border-slate-700"
+                      className="w-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700"
                       alt={feed.user.username}
                       loading="lazy"
                     />
                     <div>
-                      <span className="t-primary font-medium block">
+                      <span className="t-primary font-medium block text-base">
                         {feed.user.username}
                       </span>
                       <span className="t-muted text-sm">
@@ -310,7 +310,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       </span>
                     </div>
                   </div>
-                </div>
+                </footer>
               </article>
               <AdjacentSection id={id} setError={setError}/>
               {feed && <Comments id={`${feed.id}`} />}

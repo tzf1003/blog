@@ -59,19 +59,30 @@ export function Header({ children }: { children?: React.ReactNode }) {
         return baseClasses.join(" ");
     }, [isVisible, prefersReducedMotion]);
 
-    // Glass容器动态类名
+    // Glass容器动态类名 - 使用基础glass类 + 动态样式实现平滑过渡
     const glassClasses = useMemo(() => {
         const classes = [
             "rounded-2xl",
-            "transition-all",
+            // 基础玻璃效果样式
+            "backdrop-blur-glass bg-white/20 dark:bg-black/25",
+            // 过渡动画 - 包含所有需要过渡的属性
+            "transition-[backdrop-filter,background-color,border-color,box-shadow,opacity]",
             prefersReducedMotion ? "duration-0" : "duration-300",
+            "ease-out",
         ];
 
-        // 滚动时增强blur效果
+        // 滚动时增强效果 - 使用细粒度类名控制
         if (isScrolled) {
-            classes.push("glass-strong shadow-glow-md");
+            classes.push(
+                "backdrop-blur-glass-strong bg-white/30 dark:bg-black/35",
+                "border border-white/30 dark:border-white/20",
+                "shadow-glow-md"
+            );
         } else {
-            classes.push("glass-medium shadow-deep");
+            classes.push(
+                "border border-transparent",
+                "shadow-deep"
+            );
         }
 
         return classes.join(" ");
@@ -355,10 +366,16 @@ function LanguageSwitch({ className }: { className?: string }) {
                 position="bottom right"
                 arrow={false}
                 closeOnDocumentClick
+                modal
+                overlayStyle={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)'
+                }}
             >
-                <div className={`glass-strong rounded-xl p-3 mt-2 shadow-glow min-w-[160px] 
+                <div className={`glass-strong rounded-xl p-4 shadow-glow min-w-[200px] 
                     ${prefersReducedMotion ? '' : 'animate-fade-in'}`}>
-                    <p className='font-heading font-semibold t-primary mb-2 text-sm'>
+                    <p className='font-heading font-semibold t-primary mb-3 text-base'>
                         Languages
                     </p>
                     <div className="space-y-1">

@@ -133,10 +133,10 @@ export function Markdown({ content }: { content: string }) {
 
           if (isCodeBlock) {
             return (
-              <div className="relative group">
+              <div className="relative group my-6">
                 <SyntaxHighlighter
                   PreTag="div"
-                  className="rounded"
+                  className="rounded-xl !py-5 !px-5"
                   language={language}
                   style={
                     colorMode === "dark"
@@ -148,7 +148,7 @@ export function Markdown({ content }: { content: string }) {
                 >
                   {String(children).replace(/\n$/, "")}
                 </SyntaxHighlighter>
-                <button className="absolute top-1 right-1 px-2 py-1 bg-w rounded-md text-sm bg-hover select-none invisible group-hover:visible"
+                <button className="absolute top-2 right-2 px-3 py-1.5 bg-w rounded-lg text-sm bg-hover select-none invisible group-hover:visible transition-all duration-200"
                   onClick={() => {
                     navigator.clipboard.writeText(String(children));
                     setCopied(true);
@@ -175,7 +175,7 @@ export function Markdown({ content }: { content: string }) {
         blockquote({ children, ...props }) {
           return (
             <blockquote
-              className="border-l-4 border-gray-300 dark:border-gray-500 pl-4 italic text-gray-500 dark:text-gray-400"
+              className="border-l-4 border-slate-300 dark:border-slate-600 pl-6 py-2 my-6 italic text-slate-600 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/30 rounded-r-lg"
               {...props}
             >
               {children}
@@ -199,8 +199,8 @@ export function Markdown({ content }: { content: string }) {
 
         ul({ children, className, ...props }) {
           const listClass = className?.includes("contains-task-list")
-            ? "list-none pl-5"
-            : "list-disc pl-5 mt-2";
+            ? "list-none pl-6 my-5 space-y-2"
+            : "list-disc pl-6 my-5 space-y-2";
           return (
             <ul className={listClass} {...props}>
               {children}
@@ -209,14 +209,14 @@ export function Markdown({ content }: { content: string }) {
         },
         ol({ children, ...props }) {
           return (
-            <ol className="list-decimal pl-5" {...props}>
+            <ol className="list-decimal pl-6 my-5 space-y-2" {...props}>
               {children}
             </ol>
           );
         },
         li({ children, ...props }) {
           return (
-            <li className="pl-2 py-1" {...props}>
+            <li className="pl-2 py-1 leading-relaxed" {...props}>
               {children}
             </li>
           );
@@ -235,7 +235,7 @@ export function Markdown({ content }: { content: string }) {
           return (
             <h1
               id={children?.toString()}
-              className="text-3xl font-bold mt-4"
+              className="text-3xl font-bold mt-10 mb-6 pb-3 border-b border-slate-200 dark:border-slate-700"
               {...props}
             >
               {children}
@@ -246,7 +246,7 @@ export function Markdown({ content }: { content: string }) {
           return (
             <h2
               id={children?.toString()}
-              className="text-2xl font-bold mt-4"
+              className="text-2xl font-bold mt-10 mb-5 pb-2 border-b border-slate-200/60 dark:border-slate-700/60"
               {...props}
             >
               {children}
@@ -257,7 +257,7 @@ export function Markdown({ content }: { content: string }) {
           return (
             <h3
               id={children?.toString()}
-              className="text-xl font-bold mt-4"
+              className="text-xl font-bold mt-8 mb-4"
               {...props}
             >
               {children}
@@ -268,7 +268,7 @@ export function Markdown({ content }: { content: string }) {
           return (
             <h4
               id={children?.toString()}
-              className="text-lg font-bold mt-4"
+              className="text-lg font-bold mt-6 mb-3"
               {...props}
             >
               {children}
@@ -279,7 +279,7 @@ export function Markdown({ content }: { content: string }) {
           return (
             <h5
               id={children?.toString()}
-              className="text-base font-bold mt-4"
+              className="text-base font-bold mt-5 mb-2"
               {...props}
             >
               {children}
@@ -290,7 +290,7 @@ export function Markdown({ content }: { content: string }) {
           return (
             <h6
               id={children?.toString()}
-              className="text-sm font-bold mt-4"
+              className="text-sm font-bold mt-4 mb-2"
               {...props}
             >
               {children}
@@ -299,20 +299,24 @@ export function Markdown({ content }: { content: string }) {
         },
         p({ children, node, ...props }) {
           return (
-            <p className="mt-2 py-1" {...props}>
+            <p className="my-5 leading-relaxed" {...props}>
               {children}
             </p>
           );
         },
         hr({ children, ...props }) {
-          return <hr className="my-4" {...props} />;
+          return <hr className="my-10 border-slate-200 dark:border-slate-700" {...props} />;
         },
-        table: ({ node, ...props }) => <table className="table" {...props} />,
+        table: ({ node, ...props }) => (
+          <div className="my-6 overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+            <table className="w-full border-collapse" {...props} />
+          </div>
+        ),
         th: ({ node, ...props }) => (
-          <th className="px-4 py-2 border bg-gray-600" {...props} />
+          <th className="px-4 py-3 text-left font-semibold bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700" {...props} />
         ),
         td: ({ node, ...props }) => (
-          <td className="px-4 py-2 border" {...props} />
+          <td className="px-4 py-3 border-b border-slate-100 dark:border-slate-800" {...props} />
         ),
         sup: ({ children, ...props }) => (
           <sup className="text-xs mr-[4px]" {...props}>

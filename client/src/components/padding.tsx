@@ -10,7 +10,7 @@ export function Padding({ className = "mx-4", children }: { className?: string, 
     return (
         <main 
             id="main-content" 
-            className={`${className} sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 2xl:mx-24 transition-all duration-300`}
+            className={`${className} sm:mx-6 md:mx-8 lg:mx-12 xl:mx-16 2xl:mx-24 transition-all duration-300 outline-none`}
             role="main"
             tabIndex={-1}
         >

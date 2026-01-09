@@ -32,7 +32,6 @@ function Footer() {
 
     return (
         <footer className="mt-16 relative" role="contentinfo">
-            <div className="absolute inset-0 cyber-grid-subtle opacity-30 dark:opacity-50 pointer-events-none" aria-hidden="true" />
             
             <Helmet>
                 <link rel="alternate" type="application/rss+xml" title={siteName} href="/sub/rss.xml" />
