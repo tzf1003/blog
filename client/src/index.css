@@ -253,16 +253,18 @@ html {
 
 /* Body基础样式 */
 body {
-  @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100;
+  @apply text-slate-900 dark:text-slate-100;
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: var(--theme-transition);
+  /* 背景由 GlobalBackground 组件提供 */
+  background: transparent;
 }
 
 /* 暗色模式body增强 */
 [data-color-mode="dark"] body {
-  @apply bg-cyber-dark;
+  background: transparent;
 }
 
 /* ============================================
@@ -324,6 +326,24 @@ article .toc-content {
   border: none !important;
   box-shadow: none !important;
   font-size: inherit !important;
+}
+
+/* 彻底覆盖 prose-lg 对 pre 的样式 */
+.prose pre.not-prose,
+.prose .not-prose pre,
+.prose-lg pre.not-prose,
+.prose-lg .not-prose pre,
+.toc-content .not-prose pre,
+.toc-content .not-prose code,
+[class*="prose"] .not-prose pre,
+[class*="prose"] .not-prose code {
+  all: unset !important;
+  display: block !important;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
 }
 
 .w-md-editor {
