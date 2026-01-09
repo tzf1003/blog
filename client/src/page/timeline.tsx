@@ -130,15 +130,15 @@ function YearSection({
             }}
         >
             {/* 年份标题 */}
-            <div className="flex items-center gap-4 mb-6 pl-4 md:pl-8">
-                {/* 年份节点 - cyber风格 */}
-                <div className="relative z-10 flex items-center justify-center">
+            <div className="flex items-center gap-4 mb-6">
+                {/* 年份节点 - cyber风格，绝对定位对齐到时间线主轴 */}
+                <div className="absolute left-4 md:left-8 z-10 flex items-center justify-center -translate-x-1/2">
                     <div className="w-4 h-4 rounded-full bg-cyber-green shadow-glow animate-pulse" />
                     <div className="absolute w-8 h-8 rounded-full bg-cyber-green/20 animate-ping" 
                         style={{ animationDuration: '2s' }} />
                 </div>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pl-10 md:pl-16">
                     <span className="text-2xl md:text-3xl font-heading font-bold text-cyber-green">
                         {t('year$year', { year: year })}
                     </span>

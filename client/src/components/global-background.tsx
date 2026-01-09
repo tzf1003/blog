@@ -63,13 +63,13 @@ export function GlobalBackground() {
 
     // 根据主题获取颜色配置
     const colors = useMemo(() => ({
-        // 暗色模式：绿色系
-        // 浅色模式：使用更深的颜色以保证可见性
-        primary: isDark ? 'rgba(0, 255, 65,' : 'rgba(0, 180, 50,',
-        secondary: isDark ? 'rgba(0, 200, 100,' : 'rgba(0, 150, 80,',
-        particleOpacity: isDark ? 0.7 : 0.5,
-        connectionOpacity: isDark ? 0.25 : 0.15,
-        flowLineOpacity: isDark ? 0.3 : 0.2,
+        // 暗色模式：亮绿色
+        // 浅色模式：使用更深更饱和的颜色以保证可见性
+        primary: isDark ? 'rgba(0, 255, 65,' : 'rgba(0, 140, 60,',
+        secondary: isDark ? 'rgba(0, 200, 100,' : 'rgba(0, 120, 50,',
+        particleOpacity: isDark ? 0.7 : 0.85,
+        connectionOpacity: isDark ? 0.25 : 0.35,
+        flowLineOpacity: isDark ? 0.3 : 0.45,
     }), [isDark]);
 
     // 粒子配置
