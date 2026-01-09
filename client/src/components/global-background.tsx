@@ -339,6 +339,16 @@ export function GlobalBackground() {
 
     return (
         <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+            {/* 渐变背景层 - 为 backdrop-blur 提供可模糊的内容 */}
+            <div 
+                className="absolute inset-0"
+                style={{
+                    background: isDark 
+                        ? 'radial-gradient(ellipse at 20% 20%, rgba(0, 255, 65, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(0, 200, 100, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(0, 150, 80, 0.04) 0%, transparent 70%)'
+                        : 'radial-gradient(ellipse at 20% 20%, rgba(0, 180, 80, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(0, 150, 100, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(200, 230, 210, 0.15) 0%, transparent 70%)'
+                }}
+            />
+            
             {/* 网格背景 */}
             <div className="absolute inset-0 cyber-grid-global" />
             
