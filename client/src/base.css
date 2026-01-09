@@ -90,9 +90,9 @@
 
     /* Glass 内 pre 标签样式覆盖 */
     .glass pre {
-      background: none;
-      margin: 0;
-      padding: 0;
+      background: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
     /* ============================================
