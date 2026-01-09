@@ -46,7 +46,7 @@
       @apply bg-white/70 dark:bg-black/70;
       @apply border border-white/30 dark:border-white/20;
       @apply shadow-glass-strong dark:shadow-glass-dark-strong;
-      @apply transition-all duration-300;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     
     /* Glass Glow - 悬浮发光效果 (Cyber Green) */
