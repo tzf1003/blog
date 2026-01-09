@@ -304,12 +304,14 @@ textarea:focus {
   transition: var(--theme-transition);
 }
 
-/* prose 和 markdown 内容背景透明，让父级 glass 效果可见 */
+/* 强制 prose 和 markdown 内容背景透明 */
 .prose,
 .prose-slate,
 .prose-invert,
 .dark .prose-invert,
-.toc-content {
+.toc-content,
+article .prose,
+article .toc-content {
   background: transparent !important;
   background-color: transparent !important;
 }
