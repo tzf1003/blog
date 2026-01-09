@@ -7,11 +7,12 @@ import Select from 'react-select';
 import { ShowAlertType, useAlert, useConfirm } from "../components/dialog";
 import { Input } from "../components/input";
 import { Waiting } from "../components/loading";
-import { client } from "../main";
+import { client } from "../utils/api";
 import { ClientConfigContext } from "../state/config";
 import { ProfileContext } from "../state/profile";
 import { headersWithAuth } from "../utils/auth";
 import { siteName } from "../utils/constants";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 
 type FriendItem = {
@@ -50,7 +51,8 @@ async function publish({ name, avatar, desc, url, showAlert }: { name: string, a
 export function FriendsPage() {
     const { t } = useTranslation()
     const config = useContext(ClientConfigContext)
-    let [apply, setApply] = useState<FriendItem>()
+    const prefersReducedMotion = useReducedMotion()
+    const [apply, setApply] = useState<FriendItem>()
     const [name, setName] = useState("")
     const [desc, setDesc] = useState("")
     const [avatar, setAvatar] = useState("")
@@ -63,6 +65,7 @@ export function FriendsPage() {
     const [status, setStatus] = useState<'idle' | 'loading'>('loading')
     const ref = useRef(false)
     const { showAlert, AlertUI } = useAlert()
+    
     useEffect(() => {
         if (ref.current) return
         client.friend.index.get({
@@ -84,9 +87,11 @@ export function FriendsPage() {
         })
         ref.current = true
     }, [])
+    
     function publishButton() {
         publish({ name, desc, avatar, url, showAlert })
     }
+    
     return (<>
         <Helmet>
             <title>{`${t('friends.title')} - ${process.env.NAME}`}</title>
@@ -97,25 +102,40 @@ export function FriendsPage() {
             <meta property="og:url" content={document.URL} />
         </Helmet>
         <Waiting for={friendsAvailable.length !== 0 || friendsUnavailable.length !== 0 || status === "idle"}>
-            <main className="w-full flex flex-col justify-center items-center mb-8 t-primary ani-show">
+            <main className={`w-full flex flex-col justify-center items-center mb-8 t-primary ${!prefersReducedMotion ? 'animate-fade-in' : ''}`}>
+                {/* 页面标题 */}
+                <div className="wauto text-start py-8">
+                    <h1 className={`text-5xl font-heading font-bold t-primary mb-3 ${!prefersReducedMotion ? 'animate-slide-up' : ''}`}>
+                        {t('friends.title')}
+                    </h1>
+                </div>
+                
                 <FriendList title={t('friends.title')} show={friendsAvailable.length > 0} friends={friendsAvailable} />
                 <FriendList title={t('friends.left')} show={friendsUnavailable.length > 0} friends={friendsUnavailable} />
                 <FriendList title={t('friends.review.waiting')} show={waitList.length > 0} friends={waitList} />
                 <FriendList title={t('friends.review.rejected')} show={refusedList.length > 0} friends={refusedList} />
                 <FriendList title={t('friends.my_apply')} show={profile?.permission !== true && apply !== undefined} friends={apply ? [apply] : []} />
+                
+                {/* 申请/创建表单 */}
                 {profile && (profile.permission || config.get("friend_apply_enable")) &&
-                    <div className="wauto t-primary flex text-start text-2xl font-bold mt-8">
-                        <div className="md:basis-1/2 bg-w rounded-xl p-4">
-                            <p>
+                    <div className="wauto mt-8">
+                        <div className="md:w-1/2 glass-medium rounded-2xl p-6 shadow-light">
+                            <h2 className="text-xl font-heading font-semibold t-primary mb-4 flex items-center gap-2">
+                                <i className="ri-user-add-line text-cyber-green"></i>
                                 {profile.permission ? t('friends.create') : t('friends.apply')}
-                            </p>
-                            <div className="text-sm mt-4 text-neutral-500 font-normal">
+                            </h2>
+                            <div className="space-y-3">
                                 <Input value={name} setValue={setName} placeholder={t('sitename')} />
-                                <Input value={desc} setValue={setDesc} placeholder={t('description')} className="mt-2" />
-                                <Input value={avatar} setValue={setAvatar} placeholder={t('avatar.url')} className="mt-2" />
-                                <Input value={url} setValue={setUrl} placeholder={t('url')} className="my-2" />
-                                <div className='flex flex-row justify-center'>
-                                    <button onClick={publishButton} className='basis-1/2 bg-theme text-white py-4 rounded-full shadow-xl shadow-light'>{t('create.title')}</button>
+                                <Input value={desc} setValue={setDesc} placeholder={t('description')} />
+                                <Input value={avatar} setValue={setAvatar} placeholder={t('avatar.url')} />
+                                <Input value={url} setValue={setUrl} placeholder={t('url')} />
+                                <div className='flex justify-center pt-2'>
+                                    <button 
+                                        onClick={publishButton} 
+                                        className='btn-primary w-full md:w-auto'
+                                    >
+                                        {t('create.title')}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -128,27 +148,38 @@ export function FriendsPage() {
 }
 
 function FriendList({ title, show, friends }: { title: string, show: boolean, friends: FriendItem[] }) {
+    const prefersReducedMotion = useReducedMotion()
+    
     return (<>
-        {
-            show && <>
-                <div className="wauto text-start py-4">
-                    <p className="text-sm mt-4 text-neutral-500 font-normal">
-                        {title}
-                    </p>
-                </div>
-                <div className="wauto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    {friends.map((friend) => (
-                        <Friend key={friend.id} friend={friend} />
-                    ))}
-                </div>
-            </>
-        }
+        {show && <>
+            <div className="wauto text-start py-4">
+                <p className="text-sm t-muted font-medium flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyber-green"></span>
+                    {title}
+                </p>
+            </div>
+            <div className="wauto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {friends.map((friend, index) => (
+                    <div 
+                        key={friend.id}
+                        className={!prefersReducedMotion ? 'animate-fade-in' : ''}
+                        style={{ 
+                            animationDelay: !prefersReducedMotion ? `${index * 50}ms` : '0ms',
+                            animationFillMode: 'forwards',
+                        }}
+                    >
+                        <Friend friend={friend} />
+                    </div>
+                ))}
+            </div>
+        </>}
     </>)
 }
 
 function Friend({ friend }: { friend: FriendItem }) {
     const { t } = useTranslation()
     const profile = useContext(ProfileContext)
+    const prefersReducedMotion = useReducedMotion()
     const [avatar, setAvatar] = useState(friend.avatar)
     const [name, setName] = useState(friend.name)
     const [desc, setDesc] = useState(friend.desc || "")
@@ -176,7 +207,7 @@ function Friend({ friend }: { friend: FriendItem }) {
                     }
                 })
             })
-    }, [friend.id])
+    }, [friend.id, showAlert, showConfirm, t])
 
     const updateFriend = useCallback(() => {
         client.friend({ id: friend.id }).put({
@@ -197,27 +228,75 @@ function Friend({ friend }: { friend: FriendItem }) {
                 })
             }
         })
-    }, [avatar, name, desc, url, status, sortOrder])
+    }, [avatar, name, desc, url, status, sortOrder, friend.id, showAlert, t])
 
     const statusOption = [
         { value: -1, label: t('friends.review.rejected') },
         { value: 0, label: t('friends.review.waiting') },
         { value: 1, label: t('friends.review.accepted') }
     ]
+    
     return (
         <>
-            <a title={friend.name} href={friend.url} target="_blank" className="bg-button w-full bg-w rounded-xl p-4 flex flex-col justify-center items-center relative">
-                <div className="w-16 h-16">
-                    <img className={"rounded-full " + (friend.health.length > 0 ? "grayscale" : "")} src={friend.avatar} alt={friend.name} loading="lazy" />
+            <a 
+                title={friend.name} 
+                href={friend.url} 
+                target="_blank" 
+                className={`
+                    group glass-medium w-full rounded-xl p-4 
+                    flex flex-col justify-center items-center relative
+                    transition-all duration-300
+                    hover:shadow-glow-sm hover:border-cyber-green/20 hover:scale-[1.02]
+                `}
+            >
+                <div className="w-16 h-16 mb-3">
+                    <img 
+                        className={`
+                            w-full h-full rounded-full object-cover
+                            border-2 border-slate-200 dark:border-slate-700
+                            transition-all duration-300
+                            group-hover:border-cyber-green group-hover:shadow-glow-sm
+                            ${friend.health.length > 0 ? "grayscale opacity-60" : ""}
+                        `} 
+                        src={friend.avatar} 
+                        alt={friend.name} 
+                    />
                 </div>
-                <p className="text-base text-center">{friend.name}</p>
-                {friend.health.length == 0 && <p className="text-sm text-neutral-500 text-center">{friend.desc}</p>}
-                {friend.accepted !== 1 && <p className={`${friend.accepted === 0 ? "t-primary" : "text-theme"}`}>{statusOption[friend.accepted + 1].label}</p>}
-                {friend.health.length > 0 && <p className="text-sm text-gray-500 text-center">{errorHumanize(friend.health)}</p>}
-                {(profile?.permission || profile?.id === friend.uid) && <>
-                    <button onClick={(e) => { e.preventDefault(); setIsOpen(true) }} className="absolute top-0 right-0 m-2 px-2 py-1 bg-secondary t-primary rounded-full bg-button">
-                        <i className="ri-settings-line"></i>
-                    </button></>}
+                <p className="text-base font-medium text-center t-primary group-hover:text-cyber-green transition-colors duration-200">
+                    {friend.name}
+                </p>
+                {friend.health.length == 0 && (
+                    <p className="text-sm t-muted text-center line-clamp-2 mt-1">{friend.desc}</p>
+                )}
+                {friend.accepted !== 1 && (
+                    <span className={`
+                        mt-2 px-2 py-0.5 rounded-full text-xs font-medium
+                        ${friend.accepted === 0 
+                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" 
+                            : "bg-red-500/10 text-red-500"
+                        }
+                    `}>
+                        {statusOption[friend.accepted + 1].label}
+                    </span>
+                )}
+                {friend.health.length > 0 && (
+                    <p className="text-xs text-red-500 text-center mt-2">{errorHumanize(friend.health)}</p>
+                )}
+                {(profile?.permission || profile?.id === friend.uid) && (
+                    <button 
+                        onClick={(e) => { e.preventDefault(); setIsOpen(true) }} 
+                        className={`
+                            absolute top-2 right-2 w-8 h-8 
+                            flex items-center justify-center rounded-lg
+                            glass t-secondary
+                            transition-all duration-200
+                            hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-cyber-green
+                            opacity-0 group-hover:opacity-100
+                        `}
+                    >
+                        <i className="ri-settings-3-line"></i>
+                    </button>
+                )}
             </a>
 
             <Modal
@@ -237,65 +316,73 @@ function Friend({ friend }: { friend: FriendItem }) {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        background: 'white',
+                        background: 'transparent',
                     },
                     overlay: {
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
                         zIndex: 1000
                     }
-                }
-                }
+                }}
                 onRequestClose={() => setIsOpen(false)}
                 contentLabel={t('update$sth', { sth: friend.name })}
             >
-                <div className="w-[80vw] sm:w-[60vw] md:w-[50vw] lg:w-[40vw] xl:w-[30vw] bg-w rounded-xl p-4 flex flex-col justify-start items-center relative">
-                    <div className="w-16 h-16">
-                        <img className={"rounded-xl " + (friend.health.length > 0 ? "grayscale" : "")} src={friend.avatar} alt={friend.name} loading="lazy" />
+                <div className={`w-[80vw] sm:w-[60vw] md:w-[50vw] lg:w-[40vw] xl:w-[30vw] glass-strong rounded-2xl p-6 shadow-glow ${!prefersReducedMotion ? 'animate-slide-up' : ''}`}>
+                    <div className="flex flex-col items-center mb-4">
+                        <img 
+                            className={`w-16 h-16 rounded-xl border-2 border-slate-200 dark:border-slate-700 ${friend.health.length > 0 ? "grayscale" : ""}`} 
+                            src={friend.avatar} 
+                            alt={friend.name} 
+                        />
+                        <h2 className="text-lg font-heading font-semibold t-primary mt-2">{friend.name}</h2>
                     </div>
-                    {profile?.permission &&
-                        <div className="flex flex-col w-full items-start mt-4 px-4">
-                            <div className="flex flex-row justify-between w-full items-center">
-                                <div className="flex flex-col">
-                                    <p className="text-lg dark:text-white">
-                                        {t('status')}
-                                    </p>
-                                </div>
-                                <div className="flex flex-row items-center justify-center space-x-4">
-                                    <Select options={statusOption} required defaultValue={statusOption[friend.accepted + 1]}
-                                        onChange={(newValue, _) => {
-                                            const value = newValue?.value
-                                            if (value !== undefined) {
-                                                setStatus(value)
-                                            }
-                                        }}
-                                    />
-                                </div>
+                    
+                    {profile?.permission && (
+                        <div className="space-y-3 mb-4 p-3 glass rounded-xl">
+                            <div className="flex flex-row justify-between items-center">
+                                <span className="text-sm t-secondary">{t('status')}</span>
+                                <Select 
+                                    options={statusOption} 
+                                    required 
+                                    defaultValue={statusOption[friend.accepted + 1]}
+                                    onChange={(newValue) => {
+                                        const value = newValue?.value
+                                        if (value !== undefined) {
+                                            setStatus(value)
+                                        }
+                                    }}
+                                    className="w-40"
+                                />
                             </div>
-                            <div className="flex flex-row justify-between w-full items-center mt-2">
-                                <div className="flex flex-col">
-                                    <p className="text-lg dark:text-white">
-                                        {t('sort_order')}
-                                    </p>
-                                </div>
-                                <div className="flex flex-row items-center justify-center space-x-4">
-                                    <Input
-                                        value={sortOrder.toString()} 
-                                        setValue={(val) => setSortOrder(parseInt(val) || 0)} 
-                                        placeholder={t('sort_order')} 
-                                    />
-                                </div>
+                            <div className="flex flex-row justify-between items-center">
+                                <span className="text-sm t-secondary">{t('sort_order')}</span>
+                                <Input
+                                    value={sortOrder.toString()} 
+                                    setValue={(val) => setSortOrder(parseInt(val) || 0)} 
+                                    placeholder={t('sort_order')}
+                                    className="w-40"
+                                />
                             </div>
                         </div>
-                    }
-                    <Input value={name} setValue={setName} placeholder={t('sitename')} className="mt-4" />
-                    <Input value={desc} setValue={setDesc} placeholder={t('description')} className="mt-2" />
-                    <Input value={avatar} setValue={setAvatar} placeholder={t('avatar.url')} className="mt-2" />
-                    <Input value={url} setValue={setUrl} placeholder={t('url')} className="my-2" />
-                    <div className='flex flex-row justify-center space-x-2'>
-                        <button onClick={deleteFriend} className="bg-secondary text-theme rounded-full bg-button px-4 py-2 mt-2">{t('delete.title')}</button>
-                        <button onClick={updateFriend} className="bg-secondary t-primary rounded-full bg-button px-4 py-2 mt-2">{t('save')}</button>
+                    )}
+                    
+                    <div className="space-y-3">
+                        <Input value={name} setValue={setName} placeholder={t('sitename')} />
+                        <Input value={desc} setValue={setDesc} placeholder={t('description')} />
+                        <Input value={avatar} setValue={setAvatar} placeholder={t('avatar.url')} />
+                        <Input value={url} setValue={setUrl} placeholder={t('url')} />
                     </div>
-                </div >
+                    
+                    <div className='flex justify-center gap-3 mt-4'>
+                        <button onClick={deleteFriend} className="btn-danger">
+                            {t('delete.title')}
+                        </button>
+                        <button onClick={updateFriend} className="btn-primary">
+                            {t('save')}
+                        </button>
+                    </div>
+                </div>
             </Modal>
             <ConfirmUI />
             <AlertUI />

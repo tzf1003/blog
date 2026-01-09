@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Loading from 'react-loading';
 import { useColorMode } from "../utils/darkModeUtils";
 import { Markdown } from "./markdown";
-import { client } from "../main";
+import { client } from "../utils/api";
 import { headersWithAuth } from "../utils/auth";
 
 interface MarkdownEditorProps {

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { Helmet } from 'react-helmet'
-import { client } from "../main"
+import { client } from "../utils/api"
 import { headersWithAuth } from "../utils/auth"
 import { siteName } from "../utils/constants"
 import { useTranslation } from "react-i18next"
@@ -12,6 +12,7 @@ import Modal from "react-modal"
 import { MarkdownEditor } from "../components/markdown_editor"
 import { Waiting } from "../components/loading"
 import { MomentItem } from "../components/moment_item"
+import { useReducedMotion } from "../hooks/useReducedMotion"
 
 interface Moment {
     id: number;
@@ -36,6 +37,7 @@ export function MomentsPage() {
     const ref = useRef(false)
     const { t } = useTranslation()
     const profile = useContext(ProfileContext);
+    const prefersReducedMotion = useReducedMotion()
     const { showAlert, AlertUI } = useAlert()
     const { showConfirm, ConfirmUI } = useConfirm()
     
@@ -172,50 +174,73 @@ export function MomentsPage() {
                 <meta property="og:url" content={document.URL} />
             </Helmet>
             <Waiting for={!loading}>
-                <main className="w-full flex flex-col justify-center items-center mb-8 ani-show">
-                    <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
-                        <p>
+                <main className={`w-full flex flex-col justify-center items-center mb-8 ${!prefersReducedMotion ? 'animate-fade-in' : ''}`}>
+                    {/* 页面标题 */}
+                    <div className="wauto text-start py-8">
+                        <h1 className={`text-5xl font-heading font-bold t-primary mb-3 ${!prefersReducedMotion ? 'animate-slide-up' : ''}`}>
                             {t('moments.title')}
-                        </p>
-                        <div className="flex flex-row justify-between items-center">
-                            <p className="text-sm mt-4 text-neutral-500 font-normal">
+                        </h1>
+                        <div className={`flex flex-row justify-between items-center ${!prefersReducedMotion ? 'animate-slide-up' : ''}`}
+                            style={{ animationDelay: !prefersReducedMotion ? '50ms' : '0ms' }}>
+                            <p className="text-base t-muted font-medium">
                                 {t('moments.total$count', { count: length })}
                             </p>
                             {profile?.permission && (
                                 <button 
                                     onClick={openCreateModal}
-                                    className="text-sm font-normal rounded-full px-4 py-2 text-white bg-theme"
+                                    className="btn-primary flex items-center gap-2"
                                 >
+                                    <i className="ri-add-line"></i>
                                     {t('publish.title')}
                                 </button>
                             )}
                         </div>
                     </div>
                     
+                    {/* 动态列表 */}
                     <div className="wauto">
                         {moments && moments.length > 0 ? (
-                            <div className="space-y-6">
-                                {moments.map((moment) => (
-                                    <MomentItem 
-                                        key={moment.id} 
-                                        moment={moment} 
-                                        onDelete={handleDelete}
-                                        onEdit={handleEdit}
-                                        canManage={profile?.permission || false}
-                                    />
+                            <div className="space-y-4">
+                                {moments.map((moment, index) => (
+                                    <div 
+                                        key={moment.id}
+                                        className={!prefersReducedMotion ? 'animate-fade-in' : ''}
+                                        style={{ 
+                                            animationDelay: !prefersReducedMotion ? `${index * 50}ms` : '0ms',
+                                            animationFillMode: 'forwards',
+                                        }}
+                                    >
+                                        <MomentItem 
+                                            moment={moment} 
+                                            onDelete={handleDelete}
+                                            onEdit={handleEdit}
+                                            canManage={profile?.permission || false}
+                                        />
+                                    </div>
                                 ))}
                             </div>
-                        ) : null}
+                        ) : !loading && (
+                            <div className="glass-medium rounded-2xl p-12 text-center">
+                                <i className="ri-chat-smile-3-line text-4xl t-muted mb-4 block"></i>
+                                <p className="t-muted text-lg">{t('moments.empty', '暂无动态')}</p>
+                            </div>
+                        )}
                         
+                        {/* 加载更多 */}
                         <Waiting for={!loadingMore}>
-                            <div className="py-4 text-center">
+                            <div className="py-6 text-center">
                                 {!hasNextPage && moments && moments.length > 0 ? (
-                                    <div className="text-gray-500 pt-6">{t('no_more')}</div>
+                                    <div className="t-muted text-sm py-4 flex items-center justify-center gap-2">
+                                        <span className="w-12 h-px bg-slate-300 dark:bg-slate-700"></span>
+                                        {t('no_more')}
+                                        <span className="w-12 h-px bg-slate-300 dark:bg-slate-700"></span>
+                                    </div>
                                 ) : hasNextPage ? (
                                     <button
                                         onClick={loadMore}
-                                        className="text-sm font-normal rounded-full px-4 py-2 text-white bg-theme"
+                                        className="btn-secondary flex items-center gap-2 mx-auto"
                                     >
+                                        <i className="ri-arrow-down-line"></i>
                                         {t('load_more')}
                                     </button>
                                 ) : null}
@@ -225,6 +250,7 @@ export function MomentsPage() {
                 </main>
             </Waiting>
             
+            {/* 发布/编辑弹窗 */}
             <Modal 
                 isOpen={isModalOpen}
                 onRequestClose={() => setIsModalOpen(false)}
@@ -249,16 +275,19 @@ export function MomentsPage() {
                     },
                     overlay: {
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
                         zIndex: 1000
                     }
                 }}
             >
-                <div className="w-full bg-w p-4 rounded-2xl shadow-xl">
-                    <h2 className="text-2xl font-bold mb-4 t-primary">
+                <div className={`w-full glass-strong p-6 rounded-2xl shadow-glow ${!prefersReducedMotion ? 'animate-slide-up' : ''}`}>
+                    <h2 className="text-2xl font-heading font-bold mb-4 t-primary flex items-center gap-2">
+                        <i className={editingMoment ? "ri-edit-line text-cyber-green" : "ri-add-circle-line text-cyber-green"}></i>
                         {editingMoment ? t('moments.edit') : t('moments.publish')}
                     </h2>
                     
-                    <div className="bg-w rounded-2xl t-primary">
+                    <div className="glass rounded-xl t-primary overflow-hidden">
                         <MarkdownEditor 
                             content={content}
                             setContent={setContent}
@@ -266,19 +295,24 @@ export function MomentsPage() {
                         />
                     </div>
                     
-                    <div className="flex justify-end mt-4 space-x-2">
+                    <div className="flex justify-end mt-4 gap-3">
                         <button
                             onClick={() => setIsModalOpen(false)}
-                            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-lg"
+                            className="btn-secondary"
                         >
                             {t('cancel')}
                         </button>
                         <button
                             onClick={handleSubmit}
                             disabled={loading || !content.trim()}
-                            className="px-4 py-2 bg-theme text-white rounded-lg disabled:opacity-50"
+                            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? t('saving') : editingMoment ? t('update.title') : t('publish.title')}
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <i className="ri-loader-4-line animate-spin"></i>
+                                    {t('saving')}
+                                </span>
+                            ) : editingMoment ? t('update.title') : t('publish.title')}
                         </button>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useReducedMotion } from './useReducedMotion'
 
 export interface TableOfContent {
     index: number
@@ -13,6 +14,7 @@ const useTableOfContents = (selector: string) => {
     const [tableOfContents, setTableOfContents] = useState<TableOfContent[]>([])
     const [activeIndex, setActiveIndex] = useState(0)
     const { t } = useTranslation()
+    const prefersReducedMotion = useReducedMotion()
     const io = useRef<IntersectionObserver | null>(null);
     const [ref, setRef] = useState("-1")
     const lastRef = useRef("")
@@ -76,26 +78,45 @@ const useTableOfContents = (selector: string) => {
     }
 
     return {
-        TOC: () => (<div className='rounded-2xl bg-w py-4 px-4 t-primary'>
-            <h2 className="text-lg font-bold">{t("index.title")}</h2>
-            <ul className="max-h-[calc(100vh-10.25rem)] overflow-auto" style={{ scrollbarWidth: "none" }}>
-                {tableOfContents.length === 0 && <li>{t("index.empty.title")}</li>}
-                {tableOfContents.map((item) => (
-                    <li
-                        key={`toc$${item.index}`}
-                        className={`cursor-pointer hover:opacity-50 ${activeIndex === item.index ? "text-theme" : ""}`}
-                        style={{ marginLeft: item.marginLeft }}
-                        onClick={() => {
-                            item.element.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }}
-                    >
-                        {item.text}
-                    </li>
-                ))}
-            </ul>
-        </div>), cleanup
+        TOC: () => (
+            <div className={`glass-medium rounded-2xl py-4 px-4 t-primary shadow-light ${!prefersReducedMotion ? 'animate-fade-in' : ''}`}>
+                <h2 className="text-lg font-heading font-bold mb-3 flex items-center gap-2">
+                    <i className="ri-list-check text-cyber-green"></i>
+                    {t("index.title")}
+                </h2>
+                <ul className="max-h-[calc(100vh-10.25rem)] overflow-auto space-y-1" style={{ scrollbarWidth: "none" }}>
+                    {tableOfContents.length === 0 && (
+                        <li className="t-muted text-sm py-2">{t("index.empty.title")}</li>
+                    )}
+                    {tableOfContents.map((item, idx) => (
+                        <li
+                            key={`toc${item.index}`}
+                            className={`
+                                cursor-pointer py-1.5 px-2 rounded-lg text-sm
+                                transition-all duration-200
+                                ${activeIndex === item.index 
+                                    ? "text-cyber-green bg-cyber-green/10 font-medium shadow-glow-sm" 
+                                    : "t-secondary hover:t-primary hover:bg-slate-100 dark:hover:bg-slate-800"
+                                }
+                            `}
+                            style={{ 
+                                marginLeft: item.marginLeft,
+                                // 交错动画延迟
+                                animationDelay: !prefersReducedMotion ? `${idx * 30}ms` : '0ms',
+                            }}
+                            onClick={() => {
+                                item.element.scrollIntoView({
+                                    behavior: prefersReducedMotion ? 'auto' : 'smooth'
+                                });
+                            }}
+                        >
+                            {item.text}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        ), 
+        cleanup
     }
 }
 

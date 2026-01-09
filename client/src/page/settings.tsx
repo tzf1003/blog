@@ -5,7 +5,7 @@ import ReactLoading from "react-loading";
 import Modal from "react-modal";
 import {Button} from "../components/button.tsx";
 import {useAlert, useConfirm} from "../components/dialog.tsx";
-import {client, oauth_url} from "../main.tsx";
+import {client, oauth_url} from "../utils/api";
 import {
     ClientConfigContext,
     ConfigWrapper,

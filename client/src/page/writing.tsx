@@ -9,7 +9,7 @@ import {useTranslation} from "react-i18next";
 import Loading from 'react-loading';
 import {ShowAlertType, useAlert} from '../components/dialog';
 import {Checkbox, Input} from "../components/input";
-import {client} from "../main";
+import {client} from "../utils/api";
 import {headersWithAuth} from "../utils/auth";
 import {Cache} from '../utils/cache';
 import {siteName} from "../utils/constants";

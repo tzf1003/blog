@@ -215,26 +215,26 @@
 - [x] 10. Checkpoint - 确保功能组件测试通过
   - 确保所有测试通过，如有问题请询问用户
 
-- [-] 11. 页面组件更新
-  - [ ] 11.1 更新FeedsPage（首页）
+- [x] 11. 页面组件更新
+  - [x] 11.1 更新FeedsPage（首页）
     - 集成新的FeedCard组件
     - 添加stagger入场动画
     - 优化加载状态
     - _Requirements: 3.5, 10.3_
 
-  - [ ] 11.2 更新FeedPage（文章详情页）
+  - [x] 11.2 更新FeedPage（文章详情页）
     - 优化Markdown渲染样式
     - 添加代码块terminal风格
     - 实现目录导航动画
     - _Requirements: 4.3_
 
-  - [ ] 11.3 更新TimelinePage
+  - [x] 11.3 更新TimelinePage
     - 实现时间线cyber风格
     - 添加滚动动画
     - 优化移动端布局
     - _Requirements: 3.2, 11.1_
 
-  - [ ] 11.4 更新其他页面组件
+  - [x] 11.4 更新其他页面组件
     - MomentsPage、FriendsPage、HashtagsPage等
     - 统一应用新设计系统
     - 确保响应式布局

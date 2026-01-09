@@ -93,51 +93,7 @@ export function GlobalBackground() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // 设置canvas尺寸
-        const resizeCanvas = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initFlowLines();
-        };
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // 创建粒子
-        const createParticle = (width: number, height: number): Particle => {
-            const types: Particle['type'][] = ['normal', 'normal', 'normal', 'glow', 'spark'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            
-            return {
-                x: Math.random() * width,
-                y: Math.random() * height,
-                vx: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2.5 : 1),
-                vy: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2.5 : 1),
-                size: type === 'glow' 
-                    ? config.particleMaxSize + Math.random() * 1.5
-                    : config.particleMinSize + Math.random() * (config.particleMaxSize - config.particleMinSize),
-                opacity: type === 'spark' ? 0.95 : Math.random() * 0.5 + 0.4,
-                life: Math.random() * 100,
-                maxLife: 350 + Math.random() * 350,
-                type,
-            };
-        };
-
-        // 初始化粒子
-        const initParticles = () => {
-            particlesRef.current = [];
-            for (let i = 0; i < config.particleCount; i++) {
-                particlesRef.current.push(createParticle(canvas.width, canvas.height));
-            }
-        };
-
-        // 初始化流动光线
-        const initFlowLines = () => {
-            flowLinesRef.current = [];
-            for (let i = 0; i < config.flowLineCount; i++) {
-                flowLinesRef.current.push(createFlowLine());
-            }
-        };
-
+        // 创建流动光线（需要在 resizeCanvas 之前定义）
         const createFlowLine = (): FlowLine => {
             const side = Math.floor(Math.random() * 4);
             let x, y, angle;
@@ -174,6 +130,51 @@ export function GlobalBackground() {
                 opacity: 0.15 + Math.random() * 0.2,
                 angle,
             };
+        };
+
+        // 初始化流动光线（需要在 resizeCanvas 之前定义）
+        const initFlowLines = () => {
+            flowLinesRef.current = [];
+            for (let i = 0; i < config.flowLineCount; i++) {
+                flowLinesRef.current.push(createFlowLine());
+            }
+        };
+
+        // 设置canvas尺寸
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initFlowLines();
+        };
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 创建粒子
+        const createParticle = (width: number, height: number): Particle => {
+            const types: Particle['type'][] = ['normal', 'normal', 'normal', 'glow', 'spark'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            return {
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2.5 : 1),
+                vy: (Math.random() - 0.5) * config.particleSpeed * (type === 'spark' ? 2.5 : 1),
+                size: type === 'glow' 
+                    ? config.particleMaxSize + Math.random() * 1.5
+                    : config.particleMinSize + Math.random() * (config.particleMaxSize - config.particleMinSize),
+                opacity: type === 'spark' ? 0.95 : Math.random() * 0.5 + 0.4,
+                life: Math.random() * 100,
+                maxLife: 350 + Math.random() * 350,
+                type,
+            };
+        };
+
+        // 初始化粒子
+        const initParticles = () => {
+            particlesRef.current = [];
+            for (let i = 0; i < config.particleCount; i++) {
+                particlesRef.current.push(createParticle(canvas.width, canvas.height));
+            }
         };
 
         // 更新粒子

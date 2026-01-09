@@ -3,7 +3,6 @@ import React, { cloneElement, isValidElement, useEffect, useMemo, useRef } from 
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
-  base16AteliersulphurpoolLight,
   vscDarkPlus,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeKatex from "rehype-katex";
@@ -17,7 +16,6 @@ import Counter from "yet-another-react-lightbox/plugins/counter";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
-import { useColorMode } from "../utils/darkModeUtils";
 
 
 const countNewlinesBeforeNode = (text: string, offset: number) => {
@@ -38,7 +36,7 @@ const isMarkdownImageLinkAtEnd = (text: string) => {
   const match = trimmed.match(/(.*)(!\\[.*?\\]\\(.*?\\))$/s);
 
   if (match) {
-    const [, beforeImage, _] = match;
+    const [, beforeImage] = match;
 
     return beforeImage.trim().length === 0 || beforeImage.endsWith("\n");
   }
@@ -47,7 +45,6 @@ const isMarkdownImageLinkAtEnd = (text: string) => {
 };
 
 export function Markdown({ content }: { content: string }) {
-  const colorMode = useColorMode();
   const [index, setIndex] = React.useState(-1);
   const slides = useRef<SlideImage[]>();
 
@@ -117,7 +114,7 @@ export function Markdown({ content }: { content: string }) {
           const isCodeBlock = curContent.trimStart().startsWith("```");
 
           const codeBlockStyle = {
-            fontFamily: '"Fira Code", monospace',
+            fontFamily: '"Fira Code", "JetBrains Mono", monospace',
             fontSize: "14px",
             fontVariantLigatures: "normal",
             WebkitFontFeatureSettings: '"liga" 1',
@@ -134,37 +131,74 @@ export function Markdown({ content }: { content: string }) {
           if (isCodeBlock) {
             return (
               <div className="relative group my-6">
-                <SyntaxHighlighter
-                  PreTag="div"
-                  className="rounded-xl !py-5 !px-5"
-                  language={language}
-                  style={
-                    colorMode === "dark"
-                      ? vscDarkPlus
-                      : base16AteliersulphurpoolLight
-                  }
-                  wrapLongLines={true}
-                  codeTagProps={{ style: codeBlockStyle }}
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
-                <button className="absolute top-2 right-2 px-3 py-1.5 bg-w rounded-lg text-sm bg-hover select-none invisible group-hover:visible transition-all duration-200"
-                  onClick={() => {
-                    navigator.clipboard.writeText(String(children));
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }}
-                >
-                  {copied ? "Copied!" : "Copy"}
-                </button>
+                {/* Terminal风格头部 (Requirement 4.3) */}
+                <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 dark:bg-slate-900 rounded-t-xl border-b border-slate-700">
+                  {/* 窗口控制按钮 */}
+                  <div className="flex gap-1.5">
+                    <span className="w-3 h-3 rounded-full bg-red-500/80"></span>
+                    <span className="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                    <span className="w-3 h-3 rounded-full bg-green-500/80"></span>
+                  </div>
+                  {/* 语言标签 */}
+                  {language && (
+                    <span className="ml-auto text-xs text-slate-400 font-mono uppercase tracking-wider">
+                      {language}
+                    </span>
+                  )}
+                </div>
+                {/* 代码内容区域 */}
+                <div className="relative">
+                  <SyntaxHighlighter
+                    PreTag="div"
+                    className="!rounded-t-none !rounded-b-xl !py-5 !px-5 !mt-0 !bg-slate-900 dark:!bg-[#1a1a2e]"
+                    language={language}
+                    style={vscDarkPlus}
+                    wrapLongLines={true}
+                    codeTagProps={{ style: codeBlockStyle }}
+                    showLineNumbers={String(children).split('\n').length > 3}
+                    lineNumberStyle={{
+                      color: '#4a5568',
+                      paddingRight: '1em',
+                      borderRight: '1px solid #2d3748',
+                      marginRight: '1em',
+                      minWidth: '2.5em',
+                    }}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                  {/* 复制按钮 */}
+                  <button 
+                    className={`absolute top-2 right-2 px-3 py-1.5 rounded-lg text-xs font-medium
+                      transition-all duration-200 cursor-pointer
+                      ${copied 
+                        ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30' 
+                        : 'bg-slate-700/80 text-slate-300 border border-slate-600 hover:bg-slate-600 hover:text-white'
+                      }
+                      invisible group-hover:visible`}
+                    onClick={() => {
+                      navigator.clipboard.writeText(String(children));
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                  >
+                    {copied ? (
+                      <span className="flex items-center gap-1">
+                        <i className="ri-check-line"></i> Copied!
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <i className="ri-file-copy-line"></i> Copy
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             );
           } else {
             return (
               <code
                 {...rest}
-                className={`bg-[#eff1f3] dark:bg-[#4a5061] h-[24px] px-[4px] rounded-md mx-[2px] py-[2px] text-neutral-800 dark:text-neutral-300 ${className || ""
-                  }`}
+                className={`bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md mx-0.5 text-sm text-slate-800 dark:text-slate-200 font-mono ${className || ""}`}
                 style={inlineCodeStyle}
               >
                 {children}
@@ -297,25 +331,25 @@ export function Markdown({ content }: { content: string }) {
             </h6>
           );
         },
-        p({ children, node, ...props }) {
+        p({ children, ...props }) {
           return (
             <p className="my-5 leading-relaxed" {...props}>
               {children}
             </p>
           );
         },
-        hr({ children, ...props }) {
+        hr({ ...props }) {
           return <hr className="my-10 border-slate-200 dark:border-slate-700" {...props} />;
         },
-        table: ({ node, ...props }) => (
+        table: ({ ...props }) => (
           <div className="my-6 overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
             <table className="w-full border-collapse" {...props} />
           </div>
         ),
-        th: ({ node, ...props }) => (
+        th: ({ ...props }) => (
           <th className="px-4 py-3 text-left font-semibold bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700" {...props} />
         ),
-        td: ({ node, ...props }) => (
+        td: ({ ...props }) => (
           <td className="px-4 py-3 border-b border-slate-100 dark:border-slate-800" {...props} />
         ),
         sup: ({ children, ...props }) => (
@@ -329,7 +363,7 @@ export function Markdown({ content }: { content: string }) {
           </sub>
         ),
         section({ children, ...props }) {
-          if (props.hasOwnProperty("data-footnotes")) {
+          if (Object.prototype.hasOwnProperty.call(props, "data-footnotes")) {
             props.className = `${props.className || ""} mt-8`.trim();
           }
           const modifiedChildren = React.Children.map(children, (child) => {
@@ -343,7 +377,7 @@ export function Markdown({ content }: { content: string }) {
           });
           return <section {...props}>{modifiedChildren}</section>;
         },
-        div({ children, node, ...props }) {
+        div({ children, ...props }) {
           return <div {...props}>{children}</div>;
         },
       }}
