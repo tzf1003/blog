@@ -174,21 +174,23 @@ export async function friendCrontab(env: Env, ctx: ExecutionContext) {
     let health = 0
     let unhealthy = 0
     for (const friend of friend_list) {
-        console.info(`checking ${friend.name}: ${friend.url}`)
+        const friendUrl = friend.url as string
+        const friendId = friend.id as number
+        console.info(`checking ${friend.name}: ${friendUrl}`)
         try {
-            const response = await fetch(new Request(friend.url, { method: 'GET', headers: { 'User-Agent': ua } }))
+            const response = await fetch(new Request(friendUrl, { method: 'GET', headers: { 'User-Agent': ua } }))
             console.info(`response status: ${response.status}`)
             console.info(`response statusText: ${response.statusText}`)
             if (response.ok) {
-                ctx.waitUntil(db.update(schema.friends).set({ health: "" }).where(eq(schema.friends.id, friend.id)))
+                ctx.waitUntil(db.update(schema.friends).set({ health: "" }).where(eq(schema.friends.id, friendId)))
                 health++
             } else {
-                ctx.waitUntil(db.update(schema.friends).set({ health: `${response.status}` }).where(eq(schema.friends.id, friend.id)))
+                ctx.waitUntil(db.update(schema.friends).set({ health: `${response.status}` }).where(eq(schema.friends.id, friendId)))
                 unhealthy++
             }
         } catch (e: any) {
             console.error(e.message)
-            ctx.waitUntil(db.update(schema.friends).set({ health: e.message }).where(eq(schema.friends.id, friend.id)))
+            ctx.waitUntil(db.update(schema.friends).set({ health: e.message }).where(eq(schema.friends.id, friendId)))
             unhealthy++
         }
     }
