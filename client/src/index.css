@@ -302,6 +302,18 @@ textarea:focus {
   transition: var(--theme-transition);
 }
 
+/* 强制 prose 和 markdown 内容背景透明 */
+.prose,
+.prose-slate,
+.prose-invert,
+.dark .prose-invert,
+.toc-content,
+article .prose,
+article .toc-content {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .w-md-editor {
   @apply glass-medium;
 }

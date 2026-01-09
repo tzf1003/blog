@@ -160,7 +160,7 @@ export function Markdown({ content }: { content: string }) {
 
           if (isCodeBlock) {
             return (
-              <div className="relative group my-4 rounded-lg bg-slate-100 dark:bg-slate-800/80 p-4">
+              <div className="not-prose relative group my-4 rounded-lg bg-slate-100 dark:bg-slate-800/80 p-4">
                 <SyntaxHighlighter
                   PreTag="div"
                   language={language}
