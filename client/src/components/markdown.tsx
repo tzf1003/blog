@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   vscDarkPlus,
+  oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
@@ -16,6 +17,25 @@ import Counter from "yet-another-react-lightbox/plugins/counter";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
+import { useColorMode } from "../utils/darkModeUtils";
+
+// 自定义主题：保留语法高亮颜色，移除背景
+const createCustomTheme = (baseTheme: typeof vscDarkPlus) => ({
+  ...baseTheme,
+  'pre[class*="language-"]': {
+    ...baseTheme['pre[class*="language-"]'],
+    background: 'transparent',
+    margin: 0,
+    padding: 0,
+  },
+  'code[class*="language-"]': {
+    ...baseTheme['code[class*="language-"]'],
+    background: 'transparent',
+  },
+});
+
+const customDarkTheme = createCustomTheme(vscDarkPlus);
+const customLightTheme = createCustomTheme(oneLight);
 
 
 const countNewlinesBeforeNode = (text: string, offset: number) => {
@@ -47,6 +67,8 @@ const isMarkdownImageLinkAtEnd = (text: string) => {
 export function Markdown({ content }: { content: string }) {
   const [index, setIndex] = React.useState(-1);
   const slides = useRef<SlideImage[]>();
+  const colorMode = useColorMode();
+  const isDark = colorMode === 'dark';
 
   useEffect(() => {
     slides.current = undefined;
@@ -130,23 +152,21 @@ export function Markdown({ content }: { content: string }) {
 
           if (isCodeBlock) {
             return (
-              <div className="relative group my-4">
+              <div className="relative group my-4 rounded-lg bg-slate-100 dark:bg-slate-800/80 p-4">
                 <SyntaxHighlighter
                   PreTag="div"
                   language={language}
-                  style={vscDarkPlus}
+                  style={isDark ? customDarkTheme : customLightTheme}
                   wrapLongLines={true}
                   codeTagProps={{ style: codeBlockStyle }}
                   showLineNumbers={false}
                   customStyle={{
                     margin: 0,
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
-                    background: 'rgb(241 245 249)', // slate-100
+                    padding: 0,
+                    background: 'transparent',
                     border: 'none',
                     boxShadow: 'none',
                   }}
-                  className="dark:!bg-slate-800/80"
                 >
                   {String(children).replace(/\n$/, "")}
                 </SyntaxHighlighter>
