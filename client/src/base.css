@@ -2,17 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 代码块样式重置 - 最高优先级覆盖 prose 样式 */
-.not-prose pre {
-  all: unset !important;
-  display: block !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
 @layer base {
     /* ============================================
      * Header CSS Variables - 顶部导航栏过渡变量

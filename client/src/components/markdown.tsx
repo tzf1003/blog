@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   vscDarkPlus,
-  oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
@@ -17,33 +16,6 @@ import Counter from "yet-another-react-lightbox/plugins/counter";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
-import { useColorMode } from "../utils/darkModeUtils";
-
-// 自定义主题：保留语法高亮颜色，完全移除背景
-const createCustomTheme = (baseTheme: Record<string, React.CSSProperties>) => {
-  const customTheme: Record<string, React.CSSProperties> = {};
-  for (const key in baseTheme) {
-    customTheme[key] = { ...baseTheme[key] };
-    // 移除所有背景相关属性
-    if ('background' in customTheme[key]) {
-      customTheme[key].background = 'transparent';
-    }
-    if ('backgroundColor' in customTheme[key]) {
-      customTheme[key].backgroundColor = 'transparent';
-    }
-    // 移除 padding 和 margin（由外层容器控制）
-    if (key.includes('pre') || key.includes('code')) {
-      customTheme[key].margin = 0;
-      customTheme[key].padding = 0;
-      customTheme[key].background = 'transparent';
-      customTheme[key].backgroundColor = 'transparent';
-    }
-  }
-  return customTheme;
-};
-
-const customDarkTheme = createCustomTheme(vscDarkPlus as Record<string, React.CSSProperties>);
-const customLightTheme = createCustomTheme(oneLight as Record<string, React.CSSProperties>);
 
 
 const countNewlinesBeforeNode = (text: string, offset: number) => {
@@ -75,14 +47,10 @@ const isMarkdownImageLinkAtEnd = (text: string) => {
 export function Markdown({ content }: { content: string }) {
   const [index, setIndex] = React.useState(-1);
   const slides = useRef<SlideImage[]>();
-  const colorMode = useColorMode();
-  const isDark = colorMode === 'dark';
 
   useEffect(() => {
     slides.current = undefined;
   }, [content]);
-
-
 
   const Content = useMemo(() => (
     <ReactMarkdown
@@ -160,51 +128,68 @@ export function Markdown({ content }: { content: string }) {
 
           if (isCodeBlock) {
             return (
-              <div className="not-prose relative group my-4 rounded-lg bg-slate-100 dark:bg-slate-800/80 p-4">
-                <SyntaxHighlighter
-                  PreTag="div"
-                  language={language}
-                  style={isDark ? customDarkTheme : customLightTheme}
-                  wrapLongLines={true}
-                  codeTagProps={{ style: codeBlockStyle }}
-                  showLineNumbers={false}
-                  customStyle={{
-                    margin: 0,
-                    padding: 0,
-                    background: 'transparent',
-                    border: 'none',
-                    boxShadow: 'none',
-                  }}
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
-                {/* 语言标签 */}
-                {language && (
-                  <span className="absolute top-2 right-2 text-xs text-slate-400 dark:text-slate-500 font-mono">
-                    {language}
-                  </span>
-                )}
-                {/* 复制按钮 */}
-                <button 
-                  className={`absolute bottom-2 right-2 px-2 py-1 rounded text-xs
-                    transition-opacity duration-200 cursor-pointer
-                    ${copied 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
-                    }
-                    opacity-0 group-hover:opacity-100`}
-                  onClick={() => {
-                    navigator.clipboard.writeText(String(children));
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }}
-                >
-                  {copied ? (
-                    <i className="ri-check-line"></i>
-                  ) : (
-                    <i className="ri-file-copy-line"></i>
+              <div className="relative group my-6">
+                {/* Terminal风格头部 (Requirement 4.3) */}
+                <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 dark:bg-slate-900 rounded-t-xl border-b border-slate-700">
+                  {/* 窗口控制按钮 */}
+                  <div className="flex gap-1.5">
+                    <span className="w-3 h-3 rounded-full bg-red-500/80"></span>
+                    <span className="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                    <span className="w-3 h-3 rounded-full bg-green-500/80"></span>
+                  </div>
+                  {/* 语言标签 */}
+                  {language && (
+                    <span className="ml-auto text-xs text-slate-400 font-mono uppercase tracking-wider">
+                      {language}
+                    </span>
                   )}
-                </button>
+                </div>
+                {/* 代码内容区域 */}
+                <div className="relative">
+                  <SyntaxHighlighter
+                    PreTag="div"
+                    className="!rounded-t-none !rounded-b-xl !py-5 !px-5 !mt-0 !bg-slate-900 dark:!bg-[#1a1a2e]"
+                    language={language}
+                    style={vscDarkPlus}
+                    wrapLongLines={true}
+                    codeTagProps={{ style: codeBlockStyle }}
+                    showLineNumbers={String(children).split('\n').length > 3}
+                    lineNumberStyle={{
+                      color: '#4a5568',
+                      paddingRight: '1em',
+                      borderRight: '1px solid #2d3748',
+                      marginRight: '1em',
+                      minWidth: '2.5em',
+                    }}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                  {/* 复制按钮 */}
+                  <button
+                    className={`absolute top-2 right-2 px-3 py-1.5 rounded-lg text-xs font-medium
+                      transition-all duration-200 cursor-pointer
+                      ${copied
+                        ? 'bg-cyber-green/20 text-cyber-green border border-cyber-green/30'
+                        : 'bg-slate-700/80 text-slate-300 border border-slate-600 hover:bg-slate-600 hover:text-white'
+                      }
+                      invisible group-hover:visible`}
+                    onClick={() => {
+                      navigator.clipboard.writeText(String(children));
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                  >
+                    {copied ? (
+                      <span className="flex items-center gap-1">
+                        <i className="ri-check-line"></i> Copied!
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <i className="ri-file-copy-line"></i> Copy
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             );
           } else {
@@ -243,7 +228,6 @@ export function Markdown({ content }: { content: string }) {
             </strong>
           );
         },
-
         ul({ children, className, ...props }) {
           const listClass = className?.includes("contains-task-list")
             ? "list-none pl-6 my-5 space-y-2"
@@ -395,8 +379,6 @@ export function Markdown({ content }: { content: string }) {
         },
       }}
     />), [content])
-
-
 
   const show = (src: string | undefined) => {
     let slidesLocal = slides.current;
