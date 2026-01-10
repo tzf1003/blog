@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet'
 import { Link, useSearch } from "wouter"
 import { FeedCard } from "../components/feed_card"
 import { FeedCardSkeleton } from "../components/ui/loading-skeleton"
-import { client } from "../utils/api"
+import { client } from "../main"
 import { ProfileContext } from "../state/profile"
 import { headersWithAuth } from "../utils/auth"
 import { siteName } from "../utils/constants"

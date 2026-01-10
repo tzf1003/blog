@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { Helmet } from 'react-helmet'
-import { client } from "../utils/api"
+import { client } from "../main"
 import { headersWithAuth } from "../utils/auth"
 import { siteName } from "../utils/constants"
 import { useTranslation } from "react-i18next"

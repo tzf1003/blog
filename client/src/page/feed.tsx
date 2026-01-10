@@ -8,7 +8,7 @@ import {useAlert, useConfirm} from "../components/dialog";
 import {HashTag} from "../components/hashtag";
 import {Waiting} from "../components/loading";
 import {Markdown} from "../components/markdown";
-import {client} from "../utils/api";
+import {client} from "../main";
 import {ClientConfigContext} from "../state/config";
 import {ProfileContext} from "../state/profile";
 import {headersWithAuth} from "../utils/auth";

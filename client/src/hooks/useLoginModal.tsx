@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import ReactModal from "react-modal";
 import { Icon } from "../components/icon";
 import { Input } from "../components/input";
-import { oauth_url } from "../utils/api";
+import { oauth_url } from "../main";
 
 export function useLoginModal(onClose?: () => void) {
     const [username, setUsername] = useState('')

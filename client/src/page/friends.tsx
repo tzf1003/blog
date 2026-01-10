@@ -7,7 +7,7 @@ import Select from 'react-select';
 import { ShowAlertType, useAlert, useConfirm } from "../components/dialog";
 import { Input } from "../components/input";
 import { Waiting } from "../components/loading";
-import { client } from "../utils/api";
+import { client } from "../main";
 import { ClientConfigContext } from "../state/config";
 import { ProfileContext } from "../state/profile";
 import { headersWithAuth } from "../utils/auth";

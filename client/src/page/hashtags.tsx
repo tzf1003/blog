@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { Waiting } from "../components/loading";
-import { client } from "../utils/api";
+import { client } from "../main";
 import { siteName } from "../utils/constants";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
